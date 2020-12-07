@@ -40,6 +40,12 @@ public class OrganizationService {
 		}
 	}
 
+	public String updateCurrentOrganizationName(String newName) {
+		Organization org = getCurrentOrganization();
+		org.setOrganizationName(newName);
+		return _repo.save(org).getOrganizationName();
+	}
+
 	public Facility getDefaultFacility(Organization org) {
 		return _facilityRepo.findFirstByOrganizationOrderByCreatedAt(org)
 			.orElseThrow();

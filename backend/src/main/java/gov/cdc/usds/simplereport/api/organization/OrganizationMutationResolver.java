@@ -1,12 +1,15 @@
 package gov.cdc.usds.simplereport.api.organization;
 
-import gov.cdc.usds.simplereport.db.model.DeviceType;
-import gov.cdc.usds.simplereport.service.OrganizationService;
-import gov.cdc.usds.simplereport.service.DeviceTypeService;
-import graphql.kickstart.tools.GraphQLMutationResolver;
-import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import gov.cdc.usds.simplereport.api.model.ApiFacility;
+import gov.cdc.usds.simplereport.db.model.DeviceType;
+import gov.cdc.usds.simplereport.service.DeviceTypeService;
+import gov.cdc.usds.simplereport.service.OrganizationService;
+import graphql.kickstart.tools.GraphQLMutationResolver;
 
 /**
  * Created by nickrobison on 11/17/20
@@ -20,6 +23,14 @@ public class OrganizationMutationResolver implements GraphQLMutationResolver {
     public OrganizationMutationResolver(OrganizationService os, DeviceTypeService dts) {
         _os = os;
         _dts = dts;
+    }
+
+    public String updateOrganizationName(String name) {
+    	return _os.updateCurrentOrganizationName(name);
+    }
+
+    public ApiFacility updateFacility(Object... varargs) {
+    	throw new RuntimeException("Didn't do this yet");
     }
 
     public void updateOrganization(String testingFacilityName,

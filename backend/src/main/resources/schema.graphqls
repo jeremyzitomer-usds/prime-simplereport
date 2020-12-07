@@ -1,6 +1,14 @@
 # java.util.Date implementation
 scalar Date
 
+type StreetAddress {
+  street: String
+  streetTwo: String
+  city: String
+  county: String
+  state: String
+  zipCode: String
+}
 type DeviceType {
   internalId: ID
   name: String
@@ -33,8 +41,13 @@ type Patient {
   testResults: [TestOrder]
 }
 type Facility {
+  id: ID
   name: String
   cliaNumber: String
+  orderingProvider: Provider
+  deviceTypes: [DeviceType!]!
+  defaultDeviceType: DeviceType
+  address: StreetAddress
   street: String
   streetTwo: String
   city: String
@@ -63,6 +76,7 @@ type Organization {
   orderingProvider: Provider
   deviceTypes: [DeviceType]
   defaultDeviceType: DeviceType
+  facilities: [Facility!]!
 }
 # TestResult and TestOrder should have the same properties
 type TestOrder {
@@ -117,6 +131,27 @@ type Query {
   whoami: User!
 }
 type Mutation {
+  updateOrganizationName(name: String!): String!
+  updateFacility(
+    id: ID
+    name: String
+    cliaNumber: String
+    orderingProviderFirstName: String
+    orderingProviderMiddleName: String
+    orderingProviderLastName: String!
+    orderingProviderSuffix: String
+    orderingProviderNPI: String!
+    orderingProviderStreet: String
+    orderingProviderStreetTwo: String
+    orderingProviderCity: String
+    orderingProviderCounty: String
+    orderingProviderState: String
+    orderingProviderZipCode: String!
+    orderingProviderPhone: String
+    deviceTypes: [ID!]!
+    defaultDevice: ID!
+  ): Facility!
+  # deprecated (can we mark that? Will it help?)
   updateOrganization(
     testingFacilityName: String!
     cliaNumber: String
@@ -137,6 +172,7 @@ type Mutation {
   ): String
   addPatient(
     lookupId: String
+    facility: ID,
     firstName: String!
     middleName: String
     lastName: String!
@@ -158,7 +194,8 @@ type Mutation {
     employedInHealthcare: Boolean!
   ): String
   updatePatient(
-    patientId: String!
+    patientId: String! # ID
+    facility: ID,
     lookupId: String
     firstName: String!
     middleName: String
@@ -183,6 +220,7 @@ type Mutation {
   addTestResult(deviceId: String!, result: String!, patientId: String!): String
   addPatientToQueue(
     patientId: String!
+    facility: ID, # should become mandatory by 12/25/2020
     pregnancy: String
     symptoms: String
     firstTest: Boolean

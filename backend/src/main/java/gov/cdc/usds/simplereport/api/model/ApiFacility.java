@@ -1,49 +1,74 @@
 package gov.cdc.usds.simplereport.api.model;
 
+import java.util.List;
+import java.util.UUID;
+
+import gov.cdc.usds.simplereport.db.model.DeviceType;
 import gov.cdc.usds.simplereport.db.model.Facility;
+import gov.cdc.usds.simplereport.db.model.auxiliary.StreetAddress;
 
 public class ApiFacility {
 
-	private Facility org;
+	private Facility wrapped;
 
 	public ApiFacility(Facility wrapped) {
 		super();
-		this.org = wrapped;
+		this.wrapped = wrapped;
+	}
+
+	public UUID getId() {
+		return wrapped.getInternalId();
 	}
 
 	public String getName() {
-		return org.getFacilityName();
+		return wrapped.getFacilityName();
 	}
 
 	public String getCliaNumber() {
-		return org.getCliaNumber();
+		return wrapped.getCliaNumber();
     }
-  
-    public String getStreet() {
-		return org.getAddress().getStreetOne();
+
+	public ApiProvider getOrderingProvider() {
+		return new ApiProvider(wrapped.getOrderingProvider());
+	}
+
+	public DeviceType getDefaultDeviceType() {
+		return wrapped.getDefaultDeviceType();
+	}
+
+	public List<DeviceType> getDeviceTypes() {
+		return wrapped.getDeviceTypes();
+	}
+
+	public StreetAddress getAddress() {
+		return wrapped.getAddress();
+	}
+
+	public String getStreet() {
+		return wrapped.getAddress().getStreetOne();
 	}
 
 	public String getStreetTwo() {
-		return org.getAddress().getStreetTwo();
+		return wrapped.getAddress().getStreetTwo();
 	}
 
 	public String getCity() {
-		return org.getAddress().getCity();
+		return wrapped.getAddress().getCity();
 	}
 
 	public String getCounty() {
-    return org.getAddress().getCounty();
+    return wrapped.getAddress().getCounty();
 	}
 
 	public String getState() {
-		return org.getAddress().getState();
+		return wrapped.getAddress().getState();
 	}
 
 	public String getZipCode() {
-		return org.getAddress().getPostalCode();
+		return wrapped.getAddress().getPostalCode();
 	}
 
 	public String getPhone() {
-		return org.getTelephone();
+		return wrapped.getTelephone();
 	}
 }
