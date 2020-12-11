@@ -22,7 +22,7 @@ public class OrganizationDataResolver implements GraphQLResolver<Organization> {
 	@Autowired
 	private OrganizationService _orgService;
 
-	public List<ApiFacility> getTestingFacility(Organization o) {
+    public List<ApiFacility> getTestingFacilities(Organization o) {
 		return _orgService.getFacilities(o).stream()
 			.map(f -> new ApiFacility(f))
 			.collect(Collectors.toList());
