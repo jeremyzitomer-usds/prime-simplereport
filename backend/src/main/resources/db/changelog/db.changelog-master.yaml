@@ -590,7 +590,7 @@ databaseChangeLog:
         - onSqlOutput: FAIL
         - onFail: MARK_RAN
         - sqlCheck:
-            sql:  SELECT case when count(1) > 0 then 1 else 0 end FROM ${database.defaultSchemaName}.organization;
+            sql: SELECT case when count(1) > 0 then 1 else 0 end FROM ${database.defaultSchemaName}.organization;
             expectedResult: 1
       changes:
         - sql:
@@ -639,7 +639,7 @@ databaseChangeLog:
                   name: facility_id
                   afterColumn: organization_id
                   type: *idtype
-                  valueComputed: (select internal_id from ${database.defaultSchemaName}.facility f where f.organization_id = organization_id) 
+                  valueComputed: (select internal_id from ${database.defaultSchemaName}.facility f where f.organization_id = organization_id)
                   remarks: The facility where this person is expected to be tested (null if they will be tested at multiple sites)
                   constraints:
                     nullable: true
@@ -653,7 +653,7 @@ databaseChangeLog:
                   afterColumn: organization_id
                   type: *idtype
                   remarks: The facility where this test took place.
-                  valueComputed: (select internal_id from ${database.defaultSchemaName}.facility f where f.organization_id = organization_id) 
+                  valueComputed: (select internal_id from ${database.defaultSchemaName}.facility f where f.organization_id = organization_id)
                   constraints:
                     foreignKeyName: fk__test_event__facility
                     referencedTableName: facility
@@ -668,7 +668,7 @@ databaseChangeLog:
                   afterColumn: organization_id
                   type: *idtype
                   remarks: The facility where this test was ordered.
-                  valueComputed: (select internal_id from ${database.defaultSchemaName}.facility f where f.organization_id = organization_id) 
+                  valueComputed: (select internal_id from ${database.defaultSchemaName}.facility f where f.organization_id = organization_id)
                   constraints:
                     foreignKeyName: fk__test_order__facility
                     referencedTableName: facility
@@ -682,7 +682,7 @@ databaseChangeLog:
                   name: facility_id
                   afterColumn: organization_id
                   type: *idtype
-                  valueComputed: (select internal_id from ${database.defaultSchemaName}.facility f where f.organization_id = organization_id) 
+                  valueComputed: (select internal_id from ${database.defaultSchemaName}.facility f where f.organization_id = organization_id)
                   constraints:
                     foreignKeyName: fk__facility_device_type__facility
                     referencedTableName: facility
@@ -701,3 +701,150 @@ databaseChangeLog:
                   name: default_device_type
               - column:
                   name: ordering_provider_id
+  - changeSet:
+      id: add-specimen-types
+      author: tbest@cdc.gov
+      comment: adds specimen types
+      changes:
+        - createTable:
+            tableName: specimen_type
+            remarks: The type specimen that was collected (nasal swab, saliva, blood, etc.)
+            columns:
+              - column:
+                  name: internal_id
+                  type: *idtype
+                  remarks: The internal database identifier for this entity.
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: DATETIME
+                  remarks: The creation timestamp for this entity.
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: DATETIME
+                  remarks: The timestamp for the most recent update of this entity.
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: *idtype
+                  remarks: The user who created this entity.
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk__anyentity__created_by # normally we make these unique, but that's a lot of boilerpate
+                    references: api_user
+              - column:
+                  name: updated_by
+                  type: *idtype
+                  remarks: The user who most recently updated this entity.
+                  constraints:
+                    nullable: false
+                    references: api_user
+                    foreignKeyName: fk__anyentity__updated_by
+              - column:
+                  name: is_deleted
+                  type: boolean
+                  remarks: Flag for soft-deletion of entities (false unless the entity has been deleted).
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: *string
+                  remarks: The name of the specimen
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uk__specimen_type__name
+              - column:
+                  name: code
+                  type: *string
+                  remarks: The code for this specimen
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uk__specimen_type__code
+        - createTable:
+            tableName: device_specimen_type
+            remarks: The available specimen types for a device
+            columns:
+              - column:
+                  name: internal_id
+                  type: *idtype
+                  remarks: The internal database identifier for this entity.
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: DATETIME
+                  remarks: The creation timestamp for this entity.
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: DATETIME
+                  remarks: The timestamp for the most recent update of this entity.
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: *idtype
+                  remarks: The user who created this entity.
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk__anyentity__created_by # normally we make these unique, but that's a lot of boilerpate
+                    references: api_user
+              - column:
+                  name: updated_by
+                  type: *idtype
+                  remarks: The user who most recently updated this entity.
+                  constraints:
+                    nullable: false
+                    references: api_user
+                    foreignKeyName: fk__anyentity__updated_by
+              - column:
+                  name: is_deleted
+                  type: boolean
+                  remarks: Flag for soft-deletion of entities (false unless the entity has been deleted).
+                  constraints:
+                    nullable: false
+              - column:
+                  name: specimen_type_id
+                  type: *idtype
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk__device_specimen_type__specimen_type
+                    references: specimen_type
+              - column:
+                  name: device_type_id
+                  type: *idtype
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk__device_specimen_type__device_type
+                    references: device_type
+        - addColumn:
+            tableName: test_event
+            columns:
+              - column:
+                  name: specimen_type_id
+                  remarks: The specimen type collected to preform the test.
+                  type: *idtype
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk__test_event__specimen_type
+                    references: specimen_type
+        - addColumn:
+            tableName: test_order
+            columns:
+              - column:
+                  name: specimen_type_id
+                  remarks: The specimen type collected to preform the test.
+                  type: *idtype
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk__test_order__specimen_type
+                    references: specimen_type
