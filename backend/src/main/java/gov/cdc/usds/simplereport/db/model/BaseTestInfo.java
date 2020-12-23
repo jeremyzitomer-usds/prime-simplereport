@@ -6,6 +6,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.FetchType;
 
 import org.hibernate.annotations.Type;
 
@@ -15,7 +16,7 @@ import gov.cdc.usds.simplereport.db.model.auxiliary.TestResult;
 public abstract class BaseTestInfo extends AuditedEntity
 		implements OrganizationScoped {
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "patient_id", updatable = false)
 	private Person patient;
 
