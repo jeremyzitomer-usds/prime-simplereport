@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-toastify";
 import {
   useAppInsightsContext,
@@ -22,6 +22,18 @@ import Dropdown from "../commonComponents/Dropdown";
 import { displayFullName, showError, showNotification } from "../utils";
 import "./EditPatient.scss";
 import Alert from "../commonComponents/Alert";
+
+const GET_FACILITIES_QUERY = gql`
+  query GetFacilities {
+    organization {
+      internalId
+      testingFacility {
+        id
+        name
+      }
+    }
+  }
+`;
 
 const ADD_PATIENT = gql`
   mutation AddPatient(
@@ -146,6 +158,26 @@ const PatientForm = (props) => {
   const [formChanged, setFormChanged] = useState(false);
   const [patient, setPatient] = useState(props.patient);
   const [submitted, setSubmitted] = useState(false);
+
+  const { data, loading, error } = useQuery(GET_FACILITIES_QUERY, {
+    fetchPolicy: "no-cache",
+  });
+  if (loading) {
+    return <p> Loading... </p>;
+  }
+  if (error) {
+    throw error;
+  }
+  if (data === undefined) {
+    return <p>Error: facility not found</p>;
+  }
+  const facilityList = data.organization.testingFacility.map((f) => ({
+    label: f.name,
+    value: f.id,
+  }));
+  // This select list is a bit strange because we need real nulls
+  // but the initial value can be undefined meaning no selection
+  facilityList.unshift({ label: "All facilities", value: "" });
 
   const onChange = (e) => {
     let value = e.target.value;
@@ -323,6 +355,22 @@ const PatientForm = (props) => {
               { label: "Student", value: "STUDENT" },
               { label: "Visitor", value: "VISITOR" },
             ]}
+          />
+          <Dropdown
+            label="Facility"
+            name="facilityId"
+            selectedValue={
+              patient.facilityId === null
+                ? undefined
+                : patient.facilityId || props.activeFacilityId
+            }
+            onChange={(e) =>
+              onChange({
+                target: { name: e.target.name, value: e.target.value || null },
+              })
+            }
+            options={facilityList}
+            includeUndefined
           />
         </div>
         <div className="prime-form-line">
