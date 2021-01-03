@@ -49,7 +49,19 @@ public class Facility extends OrganizationScopedEternalEntity {
 	)
 	private Set<DeviceType> configuredDevices = new HashSet<>();
 
-	protected Facility() {/* for hibernate */}
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "default_device_swab_id")
+    private DeviceSwab defaultDeviceSwab;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "facility_device_swab",
+            joinColumns = @JoinColumn(name = "facility_id"),
+            inverseJoinColumns = @JoinColumn(name = "device_swab_id")
+    )
+    private Set<DeviceSwab> configuredDeviceSwabs = new HashSet<>();
+
+    protected Facility() {/* for hibernate */}
 
 	public Facility(Organization org, String facilityName, String cliaNumber, Provider orderingProvider) {
 		super(org);
