@@ -139,7 +139,9 @@ public class TestDataFactory {
             null,
             "W",
             null,
-            "M",
+            List.of("nonbinary", "man"),
+            "x",
+            List.of("bisexual"),
             false,
             false);
     return _personRepo.save(p);

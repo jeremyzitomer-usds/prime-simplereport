@@ -9,6 +9,9 @@ import gov.cdc.usds.simplereport.db.model.auxiliary.RaceArrayConverter;
 import gov.cdc.usds.simplereport.db.model.auxiliary.StreetAddress;
 import gov.cdc.usds.simplereport.db.model.auxiliary.TestResultDeliveryPreference;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -46,7 +49,16 @@ public class Person extends OrganizationScopedEternalEntity {
 
   @Column private LocalDate birthDate;
   @Embedded private StreetAddress address;
-  @Column private String gender;
+
+  @Column
+  @Type(type = "list-array")
+  private List<String> gender;
+
+  @Column private String genderAssignedAtBirth;
+
+  @Column
+  @Type(type = "list-array")
+  private List<String> sexualOrientation;
 
   @Column
   @JsonDeserialize(converter = RaceArrayConverter.class)
@@ -96,7 +108,9 @@ public class Person extends OrganizationScopedEternalEntity {
       String email,
       String race,
       String ethnicity,
-      String gender,
+      Collection<String> gender,
+      String genderAssignedAtBirth,
+      Collection<String> sexualOrientation,
       Boolean residentCongregateSetting,
       Boolean employedInHealthcare) {
     super(organization);
@@ -109,7 +123,9 @@ public class Person extends OrganizationScopedEternalEntity {
     this.email = email;
     this.race = race;
     this.ethnicity = ethnicity;
-    this.gender = gender;
+    this.gender = gender == null ? null : new ArrayList<>(gender);
+    this.genderAssignedAtBirth = genderAssignedAtBirth;
+    this.sexualOrientation = sexualOrientation == null ? null : new ArrayList<>(sexualOrientation);
     this.residentCongregateSetting = residentCongregateSetting;
     this.employedInHealthcare = employedInHealthcare;
   }
@@ -134,7 +150,9 @@ public class Person extends OrganizationScopedEternalEntity {
       String email,
       String race,
       String ethnicity,
-      String gender,
+      Collection<String> gender,
+      String genderAssignedAtBirth,
+      Collection<String> sexualOrientation,
       Boolean residentCongregateSetting,
       Boolean employedInHealthcare) {
     this.lookupId = lookupId;
@@ -149,7 +167,9 @@ public class Person extends OrganizationScopedEternalEntity {
     this.email = email;
     this.race = race;
     this.ethnicity = ethnicity;
-    this.gender = gender;
+    this.gender = gender == null ? null : new ArrayList<>(gender);
+    this.genderAssignedAtBirth = genderAssignedAtBirth;
+    this.sexualOrientation = sexualOrientation == null ? null : new ArrayList<>(sexualOrientation);
     this.residentCongregateSetting = residentCongregateSetting;
     this.employedInHealthcare = employedInHealthcare;
   }
@@ -210,8 +230,16 @@ public class Person extends OrganizationScopedEternalEntity {
     return ethnicity;
   }
 
-  public String getGender() {
+  public List<String> getGender() {
     return gender;
+  }
+
+  public String getGenderAssignedAtBirth() {
+    return genderAssignedAtBirth;
+  }
+
+  public List<String> getSexualOrientation() {
+    return sexualOrientation;
   }
 
   public Boolean getResidentCongregateSetting() {

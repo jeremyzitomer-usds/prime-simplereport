@@ -265,7 +265,7 @@ class PatientExperienceControllerTest extends BaseFullStackTest {
             + newFirstName
             + "\",\"middleName\":null,\"lastName\":\""
             + newLastName
-            + "\",\"birthDate\":\"0101-01-01\",\"telephone\":\"123-123-1234\",\"role\":\"UNKNOWN\",\"email\":null,\"race\":\"refused\",\"ethnicity\":\"not_hispanic\",\"gender\":\"female\",\"residentCongregateSetting\":false,\"employedInHealthcare\":true,\"address\":{\"street\":[\"12 Someplace\",\"CA\"],\"city\":null,\"state\":\"CA\",\"county\":null,\"zipCode\":\"67890\"}}}";
+            + "\",\"birthDate\":\"0101-01-01\",\"telephone\":\"123-123-1234\",\"role\":\"UNKNOWN\",\"email\":null,\"race\":\"refused\",\"ethnicity\":\"not_hispanic\",\"gender\":[\"woman\", \"nonbinary\"],\"genderAssignedAtBirth\":\"x\",\"sexualOrientation\":[\"homosexual\", \"queer\"],\"residentCongregateSetting\":false,\"employedInHealthcare\":true,\"address\":{\"street\":[\"12 Someplace\",\"CA\"],\"city\":null,\"state\":\"CA\",\"county\":null,\"zipCode\":\"67890\"}}}";
 
     // WHEN
     MockHttpServletRequestBuilder builder =

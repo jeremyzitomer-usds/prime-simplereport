@@ -3,9 +3,11 @@ package gov.cdc.usds.simplereport.api.patient;
 import static gov.cdc.usds.simplereport.api.Translators.parseEmail;
 import static gov.cdc.usds.simplereport.api.Translators.parseEthnicity;
 import static gov.cdc.usds.simplereport.api.Translators.parseGender;
+import static gov.cdc.usds.simplereport.api.Translators.parseGenderAssignedAtBirth;
 import static gov.cdc.usds.simplereport.api.Translators.parsePersonRole;
 import static gov.cdc.usds.simplereport.api.Translators.parsePhoneNumber;
 import static gov.cdc.usds.simplereport.api.Translators.parseRace;
+import static gov.cdc.usds.simplereport.api.Translators.parseSexualOrientation;
 import static gov.cdc.usds.simplereport.api.Translators.parseState;
 import static gov.cdc.usds.simplereport.api.Translators.parseString;
 
@@ -19,6 +21,7 @@ import graphql.kickstart.tools.GraphQLMutationResolver;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import javax.servlet.http.Part;
 import org.slf4j.Logger;
@@ -69,7 +72,9 @@ public class PatientMutationResolver implements GraphQLMutationResolver {
       String county,
       String race,
       String ethnicity,
-      String gender,
+      List<String> gender,
+      String genderAssignedAtBirth,
+      List<String> sexualOrientation,
       Boolean residentCongregateSetting,
       Boolean employedInHealthcare) {
     return _ps.addPatient(
@@ -93,6 +98,8 @@ public class PatientMutationResolver implements GraphQLMutationResolver {
         parseRace(race),
         parseEthnicity(ethnicity),
         parseGender(gender),
+        parseGenderAssignedAtBirth(genderAssignedAtBirth),
+        parseSexualOrientation(sexualOrientation),
         residentCongregateSetting,
         employedInHealthcare);
   }
@@ -117,7 +124,9 @@ public class PatientMutationResolver implements GraphQLMutationResolver {
       String county,
       String race,
       String ethnicity,
-      String gender,
+      List<String> gender,
+      String genderAssignedAtBirth,
+      List<String> sexualOrientation,
       Boolean residentCongregateSetting,
       Boolean employedInHealthcare) {
     return _ps.updatePatient(
@@ -142,6 +151,8 @@ public class PatientMutationResolver implements GraphQLMutationResolver {
         parseRace(race),
         parseEthnicity(ethnicity),
         parseGender(gender),
+        parseGenderAssignedAtBirth(genderAssignedAtBirth),
+        parseSexualOrientation(sexualOrientation),
         residentCongregateSetting,
         employedInHealthcare);
   }

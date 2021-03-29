@@ -7,6 +7,7 @@ import gov.cdc.usds.simplereport.db.model.auxiliary.PersonRole;
 import gov.cdc.usds.simplereport.db.model.auxiliary.TestResult;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 /**
  * This Person POJO wrapper exists solely for serialization for the Patient Experience endpoints.
@@ -65,8 +66,16 @@ public class PxpVerifyResponse {
     return p.getEthnicity();
   }
 
-  public String getGender() {
+  public List<String> getGender() {
     return p.getGender();
+  }
+
+  public String getGenderAssignedAtBirth() {
+    return p.getGenderAssignedAtBirth();
+  }
+
+  public List<String> getSexualOrientation() {
+    return p.getSexualOrientation();
   }
 
   public Boolean getResidentCongregateSetting() {

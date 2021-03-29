@@ -3,8 +3,10 @@ package gov.cdc.usds.simplereport.api.pxp;
 import static gov.cdc.usds.simplereport.api.Translators.parseEmail;
 import static gov.cdc.usds.simplereport.api.Translators.parseEthnicity;
 import static gov.cdc.usds.simplereport.api.Translators.parseGender;
+import static gov.cdc.usds.simplereport.api.Translators.parseGenderAssignedAtBirth;
 import static gov.cdc.usds.simplereport.api.Translators.parsePhoneNumber;
 import static gov.cdc.usds.simplereport.api.Translators.parseRace;
+import static gov.cdc.usds.simplereport.api.Translators.parseSexualOrientation;
 import static gov.cdc.usds.simplereport.api.Translators.parseString;
 import static gov.cdc.usds.simplereport.api.Translators.parseSymptoms;
 
@@ -104,6 +106,8 @@ public class PatientExperienceController {
         parseRace(person.getRace()),
         parseEthnicity(person.getEthnicity()),
         parseGender(person.getGender()),
+        parseGenderAssignedAtBirth(person.getGenderAssignedAtBirth()),
+        parseSexualOrientation(person.getSexualOrientation()),
         person.getResidentCongregateSetting(),
         person.getEmployedInHealthcare());
   }

@@ -7,7 +7,9 @@ import gov.cdc.usds.simplereport.db.model.auxiliary.PersonRole;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -154,19 +156,92 @@ public class Translators {
     throw IllegalGraphqlArgumentException.mustBeEnumerated(e, ETHNICITIES);
   }
 
-  private static final Set<String> GENDERS = Set.of("male", "female", "other");
+  private static final Set<String> GENDERS =
+      Set.of("woman", "man", "nonbinary", "questioning", "not_disclosed");
 
-  public static String parseGender(String g) {
+  public static Set<String> parseGender(Collection<String> gs) {
+    if (gs == null) {
+      return null;
+    }
+    Set<String> genders = new HashSet<>();
+    boolean containsCustom = false;
+    for (String g : gs) {
+      String gender = parseString(g);
+      if (gender == null) {
+        continue;
+      }
+      gender = gender.toLowerCase();
+      if (!GENDERS.contains(gender)) {
+        if (containsCustom) {
+          throw new IllegalGraphqlArgumentException(
+              "\""
+                  + gs.toString()
+                  + "\" must contain at most one item not listed in "
+                  + "["
+                  + String.join(", ", GENDERS)
+                  + "].");
+        }
+        containsCustom = true;
+      }
+      genders.add(gender);
+    }
+    return genders;
+  }
+
+  private static final Set<String> GENDERS_ASSIGNED_AT_BIRTH =
+      Set.of("female", "male", "x", "unsure", "not_assigned", "not_disclosed");
+
+  public static String parseGenderAssignedAtBirth(String g) {
     String gender = parseString(g);
     if (gender == null) {
       return null;
     }
     gender = gender.toLowerCase();
-    if (GENDERS.contains(gender)) {
+    // Currently same logic is executed regardless of whether the string is in
+    // the preset value set or not, but keeping the preset value set around
+    // because it may be valuable in the future.
+    if (GENDERS_ASSIGNED_AT_BIRTH.contains(gender)) {
       return gender;
     }
-    throw new IllegalGraphqlArgumentException(
-        "\"" + g + "\" must be one of [" + String.join(", ", GENDERS) + "].");
+    return gender;
+  }
+
+  private static final Set<String> SEXUAL_ORIENTATIONS =
+      Set.of(
+          "asexual",
+          "bisexual_or_pansexual",
+          "heterosexual",
+          "homosexual",
+          "questioning",
+          "not_disclosed");
+
+  public static Set<String> parseSexualOrientation(Collection<String> os) {
+    if (os == null) {
+      return null;
+    }
+    Set<String> sexualOrientations = new HashSet<>();
+    boolean containsCustom = false;
+    for (String o : os) {
+      String sexualOrientation = parseString(o);
+      if (sexualOrientation == null) {
+        continue;
+      }
+      sexualOrientation = sexualOrientation.toLowerCase();
+      if (!SEXUAL_ORIENTATIONS.contains(sexualOrientation)) {
+        if (containsCustom) {
+          throw new IllegalGraphqlArgumentException(
+              "\""
+                  + os.toString()
+                  + "\" must contain at most one item not listed in "
+                  + "["
+                  + String.join(", ", SEXUAL_ORIENTATIONS)
+                  + "].");
+        }
+        containsCustom = true;
+      }
+      sexualOrientations.add(sexualOrientation);
+    }
+    return sexualOrientations;
   }
 
   private static final Map<String, Boolean> YES_NO =
