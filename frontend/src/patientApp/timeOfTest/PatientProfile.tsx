@@ -6,7 +6,9 @@ import { formatAddress } from "../../app/utils/address";
 import {
   RACE_VALUES,
   ETHNICITY_VALUES,
-  GENDER_VALUES,
+  GENDER,
+  GENDER_ASSIGNED_AT_BIRTH,
+  SEXUAL_ORIENTATION,
 } from "../../app/constants";
 import { getPatientLinkIdFromUrl } from "../../app/utils/url";
 
@@ -23,7 +25,11 @@ const PatientProfile = ({ patient }: Props) => {
   const ethnicity = ETHNICITY_VALUES.find(
     (val) => val.value === patient.ethnicity
   )?.label;
-  const gender = GENDER_VALUES.find((val) => val.value === patient.gender)
+  const gender = GENDER.find((val) => val.value === patient.gender)
+    ?.label;
+  const genderAssignedAtBirth = GENDER_ASSIGNED_AT_BIRTH.find((val) => val.value === patient.genderAssignedAtBirth)
+    ?.label;
+  const sexualOrientation = SEXUAL_ORIENTATION.find((val) => val.value === patient.sexualOrientation)
     ?.label;
 
   const newLineSpan = ({ text = "" }) => {
@@ -72,8 +78,12 @@ const PatientProfile = ({ patient }: Props) => {
       <p></p> */}
       <h3 className="font-heading-sm">Ethnicity</h3>
       <p>{ethnicity || notProvided}</p>
-      <h3 className="font-heading-sm">Biological sex</h3>
+      <h3 className="font-heading-sm">Gender identity</h3>
       <p>{gender || notProvided}</p>
+      <h3 className="font-heading-sm">Biological sex</h3>
+      <p>{genderAssignedAtBirth || notProvided}</p>
+      <h3 className="font-heading-sm">Sexual orientation</h3>
+      <p>{sexualOrientation || notProvided}</p>
       <h2 className="prime-formgroup-heading font-heading-lg">Other</h2>
       <h3 className="font-heading-sm">
         Resident in congregate care/living setting

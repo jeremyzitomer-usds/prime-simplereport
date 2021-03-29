@@ -41,6 +41,8 @@ export const testResultQuery = gql`
         lastName
         birthDate
         gender
+        genderAssignedAtBirth
+        sexualOrientation
         lookupId
       }
       createdBy {

@@ -33,6 +33,8 @@ export const GET_PATIENT = gql`
       race
       ethnicity
       gender
+      genderAssignedAtBirth
+      sexualOrientation
       residentCongregateSetting
       employedInHealthcare
       facility {
@@ -62,6 +64,8 @@ const UPDATE_PATIENT = gql`
     $race: String
     $ethnicity: String
     $gender: String
+    $genderAssignedAtBirth: String
+    $sexualOrientation: String
     $residentCongregateSetting: Boolean!
     $employedInHealthcare: Boolean!
   ) {
@@ -84,6 +88,8 @@ const UPDATE_PATIENT = gql`
       race: $race
       ethnicity: $ethnicity
       gender: $gender
+      genderAssignedAtBirth: $genderAssignedAtBirth
+      sexualOrientation: $sexualOrientation
       residentCongregateSetting: $residentCongregateSetting
       employedInHealthcare: $employedInHealthcare
     ) {

@@ -60,11 +60,35 @@ export const ETHNICITY_VALUES: { value: Ethnicity; label: string }[] = [
   { label: "Hispanic or Latino", value: "hispanic" },
   { label: "Not Hispanic", value: "not_hispanic" },
 ];
-export const GENDER_VALUES: { value: Gender; label: string }[] = [
-  { label: "Male", value: "male" },
-  { label: "Female", value: "female" },
+
+export const GENDER: { value: Gender; label: string }[] = [
+  { label: "Female, Woman, or Girl", value: "female" },
+  { label: "Male, Man, or Boy", value: "male" },
+  { label: "Nonbinary", value: "nonbinary" },
+  { label: "Questioning", value: "questioning" },
   { label: "Other", value: "other" },
+  { label: "Prefer Not to Disclose", value: "notdisclosed" },
+]
+
+export const GENDER_ASSIGNED_AT_BIRTH: { value: GenderAssignedAtBirth; label: string }[] = [
+  { label: "Female", value: "female" },
+  { label: "Male", value: "male" },
+  { label: "X", value: "x" },
+  { label: "Unsure", value: "unsure" },
+  { label: "I was Not Assigned a gender at birth", value: "none" },
+  { label: "Other", value: "other" },
+  { label: "Prefer Not to Disclose", value: "notdisclosed" },
 ];
+
+export const SEXUAL_ORIENTATION: { value: SexualOrientation; label: string }[] = [
+  { label: "Straight, Not Lesian or Gay", value: "heterosexual" },
+  { label: "Gay or Lesbian", value: "homosexual" },
+  { label: "Bisexual or Pansexual", value: "bipan" },
+  { label: "Asexual or Asexual Spectrum", value: "asexual" },
+  { label: "Questioning", value: "questioning" },
+  { label: "A sexual orientation not listed", value: "other" },
+  { label: "Prefer Not to Disclose", value: "notdisclosed" },
+]
 
 export const YES_NO_VALUES: { value: YesNo; label: string }[] = [
   { label: "Yes", value: "YES" },

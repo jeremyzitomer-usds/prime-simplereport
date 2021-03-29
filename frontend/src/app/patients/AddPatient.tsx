@@ -35,6 +35,8 @@ export const ADD_PATIENT = gql`
     $race: String
     $ethnicity: String
     $gender: String
+    $genderAssignedAtBirth: String
+    $sexualOrientation: String
     $residentCongregateSetting: Boolean!
     $employedInHealthcare: Boolean!
   ) {
@@ -56,6 +58,8 @@ export const ADD_PATIENT = gql`
       race: $race
       ethnicity: $ethnicity
       gender: $gender
+      genderAssignedAtBirth: $genderAssignedAtBirth
+      sexualOrientation: $sexualOrientation
       residentCongregateSetting: $residentCongregateSetting
       employedInHealthcare: $employedInHealthcare
     ) {
@@ -116,6 +120,8 @@ const AddPatient = () => {
             race: null,
             ethnicity: null,
             gender: null,
+            genderAssignedAtBirth: null,
+            sexualOrientation: null,
             residentCongregateSetting: null,
             employedInHealthcare: null,
             birthDate: null,

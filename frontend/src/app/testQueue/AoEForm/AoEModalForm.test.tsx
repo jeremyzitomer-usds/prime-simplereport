@@ -48,6 +48,8 @@ describe("AoEModalForm", () => {
           patient={{
             internalId: "123",
             gender: "male",
+            genderAssignedAtBirth: "male",
+            sexualOrientation: "heterosexual",
             firstName: "Steve",
             lastName: "Jobs",
           }}

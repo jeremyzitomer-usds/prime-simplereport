@@ -121,7 +121,7 @@ describe("AddPatient", () => {
               county: null,
               race: null,
               ethnicity: null,
-              gender: null,
+              Identity: null,
               residentCongregateSetting: false,
               employedInHealthcare: true,
               facilityId: mockFacilityID,

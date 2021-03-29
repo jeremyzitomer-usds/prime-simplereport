@@ -30,6 +30,8 @@ interface Props {
   patient: {
     internalId: string;
     gender: string;
+    genderAssignedAtBirth: string;
+    sexualOrientation: string;
     testResultDelivery: string;
     birthDate: string;
   };
@@ -160,7 +162,7 @@ const AoEForm: React.FC<Props> = ({
 
   // Auto-answer pregnancy question for males
   const pregnancyResponses = getPregnancyResponses();
-  if (patient.gender === "male" && !pregnancyResponse) {
+  if (patient.genderAssignedAtBirth === "male" && !pregnancyResponse) {
     setPregnancyResponse(findValueForLabel("No", pregnancyResponses));
   }
 
@@ -277,7 +279,7 @@ const AoEForm: React.FC<Props> = ({
           </div>
         </FormGroup>
 
-        {patient.gender?.toLowerCase() !== "male" && (
+        {patient.genderAssignedAtBirth?.toLowerCase() !== "male" && (
           <FormGroup title="Pregnancy">
             <RadioGroup
               legend="Currently pregnant?"

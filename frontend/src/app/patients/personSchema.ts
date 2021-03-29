@@ -5,7 +5,9 @@ import {
   RACE_VALUES,
   ROLE_VALUES,
   ETHNICITY_VALUES,
-  GENDER_VALUES,
+  GENDER,
+  GENDER_ASSIGNED_AT_BIRTH,
+  SEXUAL_ORIENTATION,
 } from "../constants";
 import { Option } from "../commonComponents/Dropdown";
 
@@ -24,6 +26,8 @@ type OptionalFields =
   | "race"
   | "ethnicity"
   | "gender"
+  | "genderAssignedAtBirth"
+  | "sexualOrientation"
   | "residentCongregateSetting"
   | "employedInHealthcare";
 
@@ -61,7 +65,9 @@ export const personSchema: yup.SchemaOf<RequiredPersonFields> = yup.object({
   zipCode: yup.string().required(),
   race: yup.mixed().oneOf([...getValues(RACE_VALUES), "", null]),
   ethnicity: yup.mixed().oneOf([...getValues(ETHNICITY_VALUES), "", null]),
-  gender: yup.mixed().oneOf([...getValues(GENDER_VALUES), "", null]),
+  gender: yup.mixed().oneOf([...getValues(GENDER), "", null]),
+  genderAssignedAtBirth: yup.mixed().oneOf([...getValues(GENDER_ASSIGNED_AT_BIRTH), "", null]),
+  sexualOrientation: yup.mixed().oneOf([...getValues(SEXUAL_ORIENTATION), "", null]),
   residentCongregateSetting: yup.bool().required(),
   employedInHealthcare: yup.bool().required(),
 });
@@ -86,7 +92,9 @@ export const allPersonErrors: Required<PersonErrors> = {
   county: "County is incorrectly formatted",
   race: "Race is incorrectly formatted",
   ethnicity: "Ethnicity is incorrectly formatted",
-  gender: "Biological Sex is incorrectly formatted",
+  gender: "Gender is incorrectly formatted",
+  genderAssignedAtBirth: "Biological Sex is incorrectly formatted",
+  sexualOrientation: "Sexual Orientation is incorrectly formatted",
   residentCongregateSetting:
     "Resident in congregate care/living setting? is required",
   employedInHealthcare: "Work in Healthcare? is required",

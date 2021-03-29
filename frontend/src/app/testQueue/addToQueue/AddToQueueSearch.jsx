@@ -34,6 +34,8 @@ export const QUERY_PATIENT = gql`
       middleName
       birthDate
       gender
+      genderAssignedAtBirth
+      sexualOrientation
       telephone
       testResultDelivery
     }

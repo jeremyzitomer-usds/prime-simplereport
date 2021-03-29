@@ -104,6 +104,8 @@ const createPatient = ({
     middleName: middle,
     lastName: last,
     gender: "female",
+    genderAssignedAtBirth: "female",
+    sexualOrientation: "heterosexual",
     __typename: "Patient",
   },
   result: "",

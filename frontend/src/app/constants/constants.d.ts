@@ -7,7 +7,9 @@ type Race =
   | "unknown"
   | "refused";
 type Ethnicity = "hispanic" | "not_hispanic";
-type Gender = "male" | "female" | "other";
+type Gender = "female" | "male" | "nonbinary" | "questioning" | "other" | "notdisclosed";
+type GenderAssignedAtBirth = "female" | "male" | "x" | "unsure" | "none" | "other" | "notdisclosed";
+type SexualOrientation = "heterosexual" | "homosexual" | "bipan" | "asexual" | "questioning" | "other" |"notdisclosed";
 type YesNo = "YES" | "NO";
 type Role = "STAFF" | "RESIDENT" | "STUDENT" | "VISITOR" | "";
 
@@ -20,6 +22,8 @@ interface Person extends Address {
   race: Race;
   ethnicity: Ethnicity;
   gender: Gender;
+  genderAssignedAtBirth: GenderAssignedAtBirth;
+  sexualOrientation: SexualOrientation;
   residentCongregateSetting: boolean;
   employedInHealthcare: boolean;
   birthDate: string;

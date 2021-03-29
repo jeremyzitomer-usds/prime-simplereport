@@ -6,7 +6,9 @@ import { stateCodes } from "../../../config/constants";
 import {
   RACE_VALUES,
   ETHNICITY_VALUES,
-  GENDER_VALUES,
+  GENDER,
+  GENDER_ASSIGNED_AT_BIRTH,
+  SEXUAL_ORIENTATION,
   ROLE_VALUES,
 } from "../../constants";
 import RadioGroup from "../../commonComponents/RadioGroup";
@@ -266,11 +268,25 @@ const PersonForm = (props: Props) => {
           onChange={onPersonChange("ethnicity")}
         />
         <RadioGroup
-          legend="Biological Sex"
+          legend="Gender Identity"
           name="gender"
-          buttons={GENDER_VALUES}
+          buttons={GENDER}
           selectedRadio={patient.gender}
           onChange={onPersonChange("gender")}
+        />
+        <RadioGroup
+          legend="Biological Sex"
+          name="genderAssignedAtBirth"
+          buttons={GENDER_ASSIGNED_AT_BIRTH}
+          selectedRadio={patient.genderAssignedAtBirth}
+          onChange={onPersonChange("genderAssignedAtBirth")}
+        />
+        <RadioGroup
+          legend="Sexual Orientation"
+          name="sexualOrientation"
+          buttons={SEXUAL_ORIENTATION}
+          selectedRadio={patient.sexualOrientation}
+          onChange={onPersonChange("sexualOrientation")}
         />
       </FormGroup>
       <FormGroup title="Other">

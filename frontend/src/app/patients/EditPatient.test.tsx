@@ -75,6 +75,8 @@ describe("EditPatient", () => {
                 race: null,
                 ethnicity: null,
                 gender: null,
+                genderAssignedAtBirth: null,
+                sexualOrientation: null,
                 residentCongregateSetting: true,
                 employedInHealthcare: true,
                 facility: null,

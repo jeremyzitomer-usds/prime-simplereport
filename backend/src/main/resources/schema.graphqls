@@ -101,6 +101,8 @@ type Patient @requiredPermissions(anyOf: ["READ_PATIENT_LIST", "SEARCH_PATIENTS"
   race: String @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
   birthDate: LocalDate
   gender: String  @requiredPermissions(anyOf: ["READ_PATIENT_LIST", "UPDATE_TEST"])
+  genderAssignedAtBirth: String  @requiredPermissions(anyOf: ["READ_PATIENT_LIST", "UPDATE_TEST"])
+  sexualOrientation: String  @requiredPermissions(anyOf: ["READ_PATIENT_LIST", "UPDATE_TEST"])
   ethnicity: String  @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
   street: String  @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
   streetTwo: String  @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
@@ -414,6 +416,8 @@ type Mutation {
     race: String
     ethnicity: String
     gender: String
+    genderAssignedAtBirth: String
+    sexualOrientation: String
     residentCongregateSetting: Boolean!
     employedInHealthcare: Boolean!
   ): Patient @requiredPermissions(allOf: ["EDIT_PATIENT"])
@@ -438,6 +442,8 @@ type Mutation {
     race: String @Size(min: 0, max: 32)
     ethnicity: String @Size(min: 0, max: 32)
     gender: String @Size(min: 0, max: 32)
+    genderAssignedAtBirth: String @Size(min: 0, max: 32)
+    sexualOrientation: String @Size(min: 0, max: 32)
     residentCongregateSetting: Boolean!
     employedInHealthcare: Boolean!
   ): Patient @requiredPermissions(allOf: ["EDIT_PATIENT"])
