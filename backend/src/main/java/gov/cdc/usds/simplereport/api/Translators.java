@@ -156,13 +156,8 @@ public class Translators {
     throw IllegalGraphqlArgumentException.mustBeEnumerated(e, ETHNICITIES);
   }
 
-  private static final Set<String> GENDERS = 
-      Set.of(
-        "woman",
-        "man",
-        "nonbinary",
-        "questioning",
-        "not_disclosed");
+  private static final Set<String> GENDERS =
+      Set.of("woman", "man", "nonbinary", "questioning", "not_disclosed");
 
   public static Set<String> parseGender(Collection<String> gs) {
     if (gs == null) {
@@ -179,8 +174,12 @@ public class Translators {
       if (!GENDERS.contains(gender)) {
         if (containsCustom) {
           throw new IllegalGraphqlArgumentException(
-              "\"" + gs.toString() + "\" must contain at most one item not listed in " +
-              "[" + String.join(", ", GENDERS) + "].");
+              "\""
+                  + gs.toString()
+                  + "\" must contain at most one item not listed in "
+                  + "["
+                  + String.join(", ", GENDERS)
+                  + "].");
         }
         containsCustom = true;
       }
@@ -189,14 +188,8 @@ public class Translators {
     return genders;
   }
 
-  private static final Set<String> GENDERS_ASSIGNED_AT_BIRTH = 
-      Set.of(
-        "female", 
-        "male", 
-        "x",
-        "unsure",
-        "not_assigned",
-        "not_disclosed");
+  private static final Set<String> GENDERS_ASSIGNED_AT_BIRTH =
+      Set.of("female", "male", "x", "unsure", "not_assigned", "not_disclosed");
 
   public static String parseGenderAssignedAtBirth(String g) {
     String gender = parseString(g);
@@ -215,12 +208,12 @@ public class Translators {
 
   private static final Set<String> SEXUAL_ORIENTATIONS =
       Set.of(
-        "asexual",
-        "bisexual_or_pansexual",
-        "heterosexual",
-        "homosexual",
-        "questioning",
-        "not_disclosed");
+          "asexual",
+          "bisexual_or_pansexual",
+          "heterosexual",
+          "homosexual",
+          "questioning",
+          "not_disclosed");
 
   public static Set<String> parseSexualOrientation(Collection<String> os) {
     if (os == null) {
@@ -237,8 +230,12 @@ public class Translators {
       if (!SEXUAL_ORIENTATIONS.contains(sexualOrientation)) {
         if (containsCustom) {
           throw new IllegalGraphqlArgumentException(
-              "\"" + os.toString() + "\" must contain at most one item not listed in " +
-              "[" + String.join(", ", SEXUAL_ORIENTATIONS) + "].");
+              "\""
+                  + os.toString()
+                  + "\" must contain at most one item not listed in "
+                  + "["
+                  + String.join(", ", SEXUAL_ORIENTATIONS)
+                  + "].");
         }
         containsCustom = true;
       }

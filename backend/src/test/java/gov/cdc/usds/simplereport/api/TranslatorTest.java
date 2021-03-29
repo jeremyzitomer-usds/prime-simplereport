@@ -3,10 +3,9 @@ package gov.cdc.usds.simplereport.api;
 import static gov.cdc.usds.simplereport.api.Translators.parseEmail;
 import static gov.cdc.usds.simplereport.api.Translators.parseEthnicity;
 import static gov.cdc.usds.simplereport.api.Translators.parseGender;
-import static gov.cdc.usds.simplereport.api.Translators.parseGenderAssignedAtBirth;
-import static gov.cdc.usds.simplereport.api.Translators.parseSexualOrientation;
 import static gov.cdc.usds.simplereport.api.Translators.parseRace;
 import static gov.cdc.usds.simplereport.api.Translators.parseRaceDisplayValue;
+import static gov.cdc.usds.simplereport.api.Translators.parseSexualOrientation;
 import static gov.cdc.usds.simplereport.api.Translators.parseState;
 import static gov.cdc.usds.simplereport.api.Translators.parseString;
 import static gov.cdc.usds.simplereport.api.Translators.parseUUID;
@@ -20,7 +19,6 @@ import gov.cdc.usds.simplereport.api.model.errors.IllegalGraphqlArgumentExceptio
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.jupiter.api.Test;
 
 class TranslatorTest {
@@ -206,11 +204,8 @@ class TranslatorTest {
   void testValidParseGender() {
     assertEquals(Set.of("nonbinary"), parseGender(List.of("nonbinary")));
     assertEquals(
-        Set.of("nonbinary", "genderqueer"), 
-        parseGender(List.of("nonbinary", "genderqueer")));
-    assertEquals(
-        Set.of("nonbinary", "woman"), 
-        parseGender(List.of("nonbinary", "woman")));
+        Set.of("nonbinary", "genderqueer"), parseGender(List.of("nonbinary", "genderqueer")));
+    assertEquals(Set.of("nonbinary", "woman"), parseGender(List.of("nonbinary", "woman")));
   }
 
   @Test
@@ -236,11 +231,9 @@ class TranslatorTest {
   void testValidParseSexualOrientation() {
     assertEquals(Set.of("asexual"), parseSexualOrientation(List.of("asexual")));
     assertEquals(
-        Set.of("asexual", "aromantic"), 
-        parseSexualOrientation(List.of("asexual", "aromantic")));
+        Set.of("asexual", "aromantic"), parseSexualOrientation(List.of("asexual", "aromantic")));
     assertEquals(
-        Set.of("asexual", "homosexual"), 
-        parseSexualOrientation(List.of("asexual", "homosexual")));
+        Set.of("asexual", "homosexual"), parseSexualOrientation(List.of("asexual", "homosexual")));
   }
 
   @Test

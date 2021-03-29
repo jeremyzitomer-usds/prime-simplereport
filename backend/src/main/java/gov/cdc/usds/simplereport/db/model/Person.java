@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -51,12 +50,13 @@ public class Person extends OrganizationScopedEternalEntity {
   @Column private LocalDate birthDate;
   @Embedded private StreetAddress address;
 
-  @Column 
+  @Column
   @Type(type = "list-array")
   private List<String> gender;
-  @Column 
-  private String genderAssignedAtBirth;
-  @Column 
+
+  @Column private String genderAssignedAtBirth;
+
+  @Column
   @Type(type = "list-array")
   private List<String> sexualOrientation;
 
