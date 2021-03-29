@@ -46,7 +46,9 @@ class PersonRepositoryTest extends BaseRepositoryTest {
             "",
             null,
             "",
-            "",
+            List.of("nonbinary", "man"),
+            "x",
+            List.of("bisexual"),
             false,
             false));
 
