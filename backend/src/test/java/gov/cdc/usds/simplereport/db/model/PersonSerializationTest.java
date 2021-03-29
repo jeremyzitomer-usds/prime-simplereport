@@ -119,7 +119,9 @@ class PersonSerializationTest {
             "a@b.c",
             "marathon",
             "generic",
-            "Male-ish",
+            List.of("nonbinary", "man"),
+            "x",
+            List.of("bisexual"),
             true,
             false);
     return p;
@@ -131,6 +133,7 @@ class PersonSerializationTest {
     assertEquals("Alexander", p.getFirstName());
     assertEquals("Hamilton", p.getLastName());
     assertEquals("white", p.getRace());
+    assertEquals(List.of("man"), p.getGender());
     assertNull(p.getFacility());
   }
 }

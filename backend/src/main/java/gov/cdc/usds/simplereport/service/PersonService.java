@@ -13,6 +13,7 @@ import gov.cdc.usds.simplereport.db.model.auxiliary.StreetAddress;
 import gov.cdc.usds.simplereport.db.model.auxiliary.TestResultDeliveryPreference;
 import gov.cdc.usds.simplereport.db.repository.PersonRepository;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -187,7 +188,9 @@ public class PersonService {
       String email,
       String race,
       String ethnicity,
-      String gender,
+      Collection<String> gender,
+      String genderAssignedAtBirth,
+      Collection<String> sexualOrientation,
       Boolean residentCongregateSetting,
       Boolean employedInHealthcare) {
     Person newPatient =
@@ -206,6 +209,8 @@ public class PersonService {
             race,
             ethnicity,
             gender,
+            genderAssignedAtBirth,
+            sexualOrientation,
             residentCongregateSetting,
             employedInHealthcare);
 
@@ -227,7 +232,9 @@ public class PersonService {
       String email,
       String race,
       String ethnicity,
-      String gender,
+      Collection<String> gender,
+      String genderAssignedAtBirth,
+      Collection<String> sexualOrientation,
       Boolean residentCongregateSetting,
       Boolean employedInHealthcare) {
     Person toUpdate = _patientContext.getLinkedOrder().getPatient();
@@ -245,6 +252,8 @@ public class PersonService {
         race,
         ethnicity,
         gender,
+        genderAssignedAtBirth,
+        sexualOrientation,
         residentCongregateSetting,
         employedInHealthcare);
     return _repo.save(toUpdate);
@@ -283,7 +292,9 @@ public class PersonService {
       String email,
       String race,
       String ethnicity,
-      String gender,
+      Collection<String> gender,
+      String genderAssignedAtBirth,
+      Collection<String> sexualOrientation,
       Boolean residentCongregateSetting,
       Boolean employedInHealthcare) {
     Person patientToUpdate = this.getPatientNoPermissionsCheck(patientId);
@@ -301,6 +312,8 @@ public class PersonService {
         race,
         ethnicity,
         gender,
+        genderAssignedAtBirth,
+        sexualOrientation,
         residentCongregateSetting,
         employedInHealthcare);
 
