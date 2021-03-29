@@ -3,6 +3,8 @@ package gov.cdc.usds.simplereport.api;
 import static gov.cdc.usds.simplereport.api.Translators.parseEmail;
 import static gov.cdc.usds.simplereport.api.Translators.parseEthnicity;
 import static gov.cdc.usds.simplereport.api.Translators.parseGender;
+import static gov.cdc.usds.simplereport.api.Translators.parseGenderAssignedAtBirth;
+import static gov.cdc.usds.simplereport.api.Translators.parseSexualOrientation;
 import static gov.cdc.usds.simplereport.api.Translators.parseRace;
 import static gov.cdc.usds.simplereport.api.Translators.parseRaceDisplayValue;
 import static gov.cdc.usds.simplereport.api.Translators.parseState;
@@ -16,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gov.cdc.usds.simplereport.api.model.errors.IllegalGraphqlArgumentException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 class TranslatorTest {
@@ -189,7 +194,7 @@ class TranslatorTest {
 
   @Test
   void testEmptyParseGender() {
-    assertNull(parseGender(""));
+    assertEquals(parseGender(List.of("")), Set.of());
   }
 
   @Test
@@ -199,7 +204,13 @@ class TranslatorTest {
 
   @Test
   void testValidParseGender() {
-    assertEquals("other", parseGender("other"));
+    assertEquals(Set.of("nonbinary"), parseGender(List.of("nonbinary")));
+    assertEquals(
+        Set.of("nonbinary", "genderqueer"), 
+        parseGender(List.of("nonbinary", "genderqueer")));
+    assertEquals(
+        Set.of("nonbinary", "woman"), 
+        parseGender(List.of("nonbinary", "woman")));
   }
 
   @Test
@@ -207,7 +218,37 @@ class TranslatorTest {
     assertThrows(
         IllegalGraphqlArgumentException.class,
         () -> {
-          parseGender("asd");
+          parseGender(List.of("value1", "value2"));
+        });
+  }
+
+  @Test
+  void testEmptyParseSexualOrientation() {
+    assertEquals(parseSexualOrientation(List.of("")), Set.of());
+  }
+
+  @Test
+  void testNullParseSexualOrientation() {
+    assertNull(parseSexualOrientation(null));
+  }
+
+  @Test
+  void testValidParseSexualOrientation() {
+    assertEquals(Set.of("asexual"), parseSexualOrientation(List.of("asexual")));
+    assertEquals(
+        Set.of("asexual", "aromantic"), 
+        parseSexualOrientation(List.of("asexual", "aromantic")));
+    assertEquals(
+        Set.of("asexual", "homosexual"), 
+        parseSexualOrientation(List.of("asexual", "homosexual")));
+  }
+
+  @Test
+  void testInvalidParseSexualOrientation() {
+    assertThrows(
+        IllegalGraphqlArgumentException.class,
+        () -> {
+          parseSexualOrientation(List.of("value1", "value2"));
         });
   }
 

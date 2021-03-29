@@ -119,7 +119,9 @@ class PersonSerializationTest {
             "a@b.c",
             "marathon",
             "generic",
-            "Male-ish",
+            List.of("nonbinary", "man"),
+            "x",
+            List.of("bisexual"),
             true,
             false);
     return p;

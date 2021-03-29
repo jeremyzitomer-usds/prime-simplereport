@@ -3,6 +3,8 @@ package gov.cdc.usds.simplereport.service;
 import static gov.cdc.usds.simplereport.api.Translators.parseEmail;
 import static gov.cdc.usds.simplereport.api.Translators.parseEthnicity;
 import static gov.cdc.usds.simplereport.api.Translators.parseGender;
+import static gov.cdc.usds.simplereport.api.Translators.parseGenderAssignedAtBirth;
+import static gov.cdc.usds.simplereport.api.Translators.parseSexualOrientation;
 import static gov.cdc.usds.simplereport.api.Translators.parsePersonRole;
 import static gov.cdc.usds.simplereport.api.Translators.parsePhoneNumber;
 import static gov.cdc.usds.simplereport.api.Translators.parseRaceDisplayValue;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -123,7 +126,10 @@ public class UploadService {
             parseEmail(getRow(row, "Email", false)),
             parseRaceDisplayValue(getRow(row, "Race", false)),
             parseEthnicity(getRow(row, "Ethnicity", false)),
-            parseGender(getRow(row, "biologicalSex", false)),
+            // this is a hack for now.
+            parseGender(List.of(getRow(row, "Gender", false))),
+            parseGenderAssignedAtBirth(getRow(row, "GenderAssignedAtBirth", false)),
+            parseSexualOrientation(List.of(getRow(row, "Gender", false))),
             parseYesNo(getRow(row, "residentCongregateSetting", true)),
             parseYesNo(getRow(row, "employedInHealthcare", true)));
       } catch (IllegalGraphqlArgumentException e) {

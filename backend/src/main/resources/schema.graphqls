@@ -100,7 +100,9 @@ type Patient @requiredPermissions(anyOf: ["READ_PATIENT_LIST", "SEARCH_PATIENTS"
   suffix: String
   race: String @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
   birthDate: LocalDate
-  gender: String  @requiredPermissions(anyOf: ["READ_PATIENT_LIST", "UPDATE_TEST"])
+  gender: [String!]  @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
+  genderAssignedAtBirth: String  @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
+  sexualOrientation: [String!]  @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
   ethnicity: String  @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
   street: String  @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
   streetTwo: String  @requiredPermissions(allOf: ["READ_PATIENT_LIST"])
@@ -413,7 +415,9 @@ type Mutation {
     county: String
     race: String
     ethnicity: String
-    gender: String
+    gender: [String!]
+    genderAssignedAtBirth: String
+    sexualOrientation: [String!]
     residentCongregateSetting: Boolean!
     employedInHealthcare: Boolean!
   ): Patient @requiredPermissions(allOf: ["EDIT_PATIENT"])
@@ -437,7 +441,9 @@ type Mutation {
     county: String
     race: String @Size(min: 0, max: 32)
     ethnicity: String @Size(min: 0, max: 32)
-    gender: String @Size(min: 0, max: 32)
+    gender: [String!] @Size(min: 0, max: 32)
+    genderAssignedAtBirth: String
+    sexualOrientation: [String!]
     residentCongregateSetting: Boolean!
     employedInHealthcare: Boolean!
   ): Patient @requiredPermissions(allOf: ["EDIT_PATIENT"])

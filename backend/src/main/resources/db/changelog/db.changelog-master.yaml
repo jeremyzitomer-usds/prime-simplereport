@@ -1650,3 +1650,35 @@ databaseChangeLog:
                   defaultValueNumeric: 200
                   constraints:
                     nullable: false
+  - changeSet:
+      id: multiple-gender-select
+      author: jeremy.a.zitomer@omb.eop.gov
+      comment: Allow multiple gender select (may include custom values).
+      changes:
+        - sql:
+            sql: |
+              ALTER TABLE ${database.defaultSchemaName}.person
+              ALTER COLUMN gender TYPE text[]
+              USING ARRAY[gender];
+      rollback:
+        - sql:
+            sql: |
+              ALTER TABLE ${database.defaultSchemaName}.person
+              ALTER COLUMN gender TYPE text
+              USING gender[1];
+  - changeSet:
+      id: add-gaab-and-sexual-orientation
+      author: jeremy.a.zitomer@omb.eop.gov
+      comment: Add gender assigned at birth and sexual orientation to person table.
+      changes:
+        - addColumn:
+            tableName: person
+            columns:
+              - column:
+                  name: gender_assigned_at_birth
+                  type: *string
+                  remarks: Gender assigned at birth (may be a custom value)
+              - column:
+                  name: sexual_orientation
+                  type: text[]
+                  remarks: Sexual orientation (may include custom values)

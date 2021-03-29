@@ -52,7 +52,9 @@ class TestOrderRepositoryTest extends BaseRepositoryTest {
                 "",
                 null,
                 "",
-                "",
+                List.of("nonbinary", "man"),
+                "x",
+                List.of("bisexual"),
                 false,
                 false));
     TestOrder order = _repo.save(new TestOrder(hoya, site));
@@ -89,7 +91,9 @@ class TestOrderRepositoryTest extends BaseRepositoryTest {
                 "",
                 null,
                 "",
-                "",
+                List.of("nonbinary", "man"),
+                "x",
+                List.of("bisexual"),
                 false,
                 false));
     Facility site = _dataFactory.createValidFacility(gtown);
