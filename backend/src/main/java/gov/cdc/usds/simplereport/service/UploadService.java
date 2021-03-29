@@ -126,10 +126,11 @@ public class UploadService {
             parseEmail(getRow(row, "Email", false)),
             parseRaceDisplayValue(getRow(row, "Race", false)),
             parseEthnicity(getRow(row, "Ethnicity", false)),
-            // this is a hack for now.
+            // this is a hack for now. We can figure out how to represent comma-separated lists
+            // in a CSV cell later.
             parseGender(List.of(getRow(row, "Gender", false))),
             parseGenderAssignedAtBirth(getRow(row, "GenderAssignedAtBirth", false)),
-            parseSexualOrientation(List.of(getRow(row, "Gender", false))),
+            parseSexualOrientation(List.of(getRow(row, "SexualOrientation", false))),
             parseYesNo(getRow(row, "residentCongregateSetting", true)),
             parseYesNo(getRow(row, "employedInHealthcare", true)));
       } catch (IllegalGraphqlArgumentException e) {
@@ -154,7 +155,9 @@ public class UploadService {
           .addColumn("Suffix", CsvSchema.ColumnType.STRING)
           .addColumn("Race", CsvSchema.ColumnType.STRING)
           .addColumn("DOB", CsvSchema.ColumnType.STRING)
-          .addColumn("biologicalSex", CsvSchema.ColumnType.STRING)
+          .addColumn("Gender", CsvSchema.ColumnType.STRING)
+          .addColumn("GenderAssignedAtBirth", CsvSchema.ColumnType.STRING)
+          .addColumn("SexualOrientation", CsvSchema.ColumnType.STRING)
           .addColumn("Ethnicity", CsvSchema.ColumnType.STRING)
           .addColumn("Street", CsvSchema.ColumnType.STRING)
           .addColumn("Street2", CsvSchema.ColumnType.STRING)

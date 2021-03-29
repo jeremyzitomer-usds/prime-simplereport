@@ -43,7 +43,7 @@ public class PatientUploadTest extends BaseApiTest {
     parts.add(
         "1",
         new HttpEntity<>(
-            "LastName,FirstName,MiddleName,Suffix,Race,DOB,biologicalSex,Ethnicity,Street,Street2,City ,County,State,ZipCode,PhoneNumber,employedInHealthcare,residentCongregateSetting,Role,Email,facilityId\nBest,Tim,,,White,5/11/1933,Male,Not_Hispanic,123 Main Street,,Washington,,DC,20008,5656667777,Yes,No,Staff,foo@example.com,",
+            "LastName,FirstName,MiddleName,Suffix,Race,DOB,Gender,GenderAssignedAtBirth,SexualOrientation,Ethnicity,Street,Street2,City ,County,State,ZipCode,PhoneNumber,employedInHealthcare,residentCongregateSetting,Role,Email,facilityId\nBest,Tim,,,White,5/11/1933,Man,Male,Heterosexual,Not_Hispanic,123 Main Street,,Washington,,DC,20008,5656667777,Yes,No,Staff,foo@example.com,",
             csvHeaders));
     return (JsonNode) runMultipart(parts);
   }

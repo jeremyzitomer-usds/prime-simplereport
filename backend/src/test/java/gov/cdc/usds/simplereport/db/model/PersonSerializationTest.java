@@ -133,6 +133,7 @@ class PersonSerializationTest {
     assertEquals("Alexander", p.getFirstName());
     assertEquals("Hamilton", p.getLastName());
     assertEquals("white", p.getRace());
+    assertEquals(List.of("man"), p.getGender());
     assertNull(p.getFacility());
   }
 }
