@@ -34,9 +34,9 @@ export const ADD_PATIENT = gql`
     $county: String
     $race: String
     $ethnicity: String
-    $gender: String
+    $gender: [String!]
     $genderAssignedAtBirth: String
-    $sexualOrientation: String
+    $sexualOrientation: [String!]
     $residentCongregateSetting: Boolean!
     $employedInHealthcare: Boolean!
   ) {
