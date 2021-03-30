@@ -81,7 +81,7 @@ export const GENDER_ASSIGNED_AT_BIRTH: { value: GenderAssignedAtBirth; label: st
 ];
 
 export const SEXUAL_ORIENTATION: { value: SexualOrientation; label: string }[] = [
-  { label: "Straight, Not Lesian or Gay", value: "heterosexual" },
+  { label: "Straight, Not Lesbian or Gay", value: "heterosexual" },
   { label: "Gay or Lesbian", value: "homosexual" },
   { label: "Bisexual or Pansexual", value: "bipan" },
   { label: "Asexual or Asexual Spectrum", value: "asexual" },
