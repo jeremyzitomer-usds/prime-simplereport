@@ -269,20 +269,22 @@ const PersonForm = (props: Props) => {
           onChange={onPersonChange("ethnicity")}
         />
         <Checkboxes
-          // onChange={() => onPersonChange("gender")}
           legend="What is your gender identity? (Choose all that apply)."
           name="gender"
           onChange={(e) => {
             if (e.target.checked) {
-              console.log('event here in if', e.target.checked);
-            } else {
-              console.log('event there in else');
+              GENDER.find((o, i) => {
+                if (o.value === e.target.value) {
+                    GENDER[i] = { label: o.label, value: o.value, checked: true };
+                    return true; // stop searching
+                }
+              });
             }
           }}
-          boxes={GENDER.map(({ label, value }) => ({
+          boxes={GENDER.map(({ label, value, checked }) => ({
             label,
             value,
-            checked: false,
+            checked,
           }))}
         />
         <RadioGroup
@@ -292,12 +294,24 @@ const PersonForm = (props: Props) => {
           selectedRadio={patient.genderAssignedAtBirth}
           onChange={onPersonChange("genderAssignedAtBirth")}
         />
-        <RadioGroup
+        <Checkboxes
           legend="How would you describe your sexual orientation? (Choose all that apply)."
           name="sexualOrientation"
-          buttons={SEXUAL_ORIENTATION}
-          selectedRadio={patient.sexualOrientation}
-          onChange={onPersonChange("sexualOrientation")}
+          onChange={(e) => {
+            if (e.target.checked) {
+              SEXUAL_ORIENTATION.find((o, i) => {
+                if (o.value === e.target.value) {
+                    SEXUAL_ORIENTATION[i] = { label: o.label, value: o.value, checked: true };
+                    return true; // stop searching
+                }
+              });
+            }
+          }}
+          boxes={SEXUAL_ORIENTATION.map(({ label, value, checked }) => ({
+            label,
+            value,
+            checked,
+          }))}
         />
       </FormGroup>
       <FormGroup title="Other">
