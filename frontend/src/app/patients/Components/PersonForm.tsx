@@ -43,6 +43,8 @@ const PersonForm = (props: Props) => {
   const [patient, setPatient] = useState(props.patient);
   const [errors, setErrors] = useState<PersonErrors>({});
 
+  let sexualOrientationValues = SEXUAL_ORIENTATION;
+
   const clearError = useCallback(
     (field: keyof PersonErrors) => {
       if (errors[field]) {
@@ -66,6 +68,13 @@ const PersonForm = (props: Props) => {
     },
     [patient, clearError]
   );
+
+  const toggleSexualOrientationCheckbox = <K extends keyof PersonFormData>(field: K) => (
+    value: PersonFormData[K]
+  ) => {
+    setFormChanged(true);
+    setPatient({ ...patient, [field]: value });
+  };
 
   const onPersonChange = <K extends keyof PersonFormData>(field: K) => (
     value: PersonFormData[K]
@@ -275,8 +284,8 @@ const PersonForm = (props: Props) => {
             if (e.target.checked) {
               GENDER.find((o, i) => {
                 if (o.value === e.target.value) {
-                    GENDER[i] = { label: o.label, value: o.value, checked: true };
-                    return true; // stop searching
+                  GENDER[i] = { label: o.label, value: o.value, checked: true };
+                  return true; // stop searching
                 }
               });
             }
@@ -301,13 +310,14 @@ const PersonForm = (props: Props) => {
             if (e.target.checked) {
               SEXUAL_ORIENTATION.find((o, i) => {
                 if (o.value === e.target.value) {
-                    SEXUAL_ORIENTATION[i] = { label: o.label, value: o.value, checked: true };
-                    return true; // stop searching
+                  sexualOrientationValues[i] = { label: o.label, value: o.value, checked: true };
+                  toggleSexualOrientationCheckbox()
+                  return true; // stop searching
                 }
               });
             }
           }}
-          boxes={SEXUAL_ORIENTATION.map(({ label, value, checked }) => ({
+          boxes={sexualOrientationValues.map(({ label, value, checked }) => ({
             label,
             value,
             checked,
