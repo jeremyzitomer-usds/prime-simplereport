@@ -11,6 +11,7 @@ import {
   SEXUAL_ORIENTATION,
   ROLE_VALUES,
 } from "../../constants";
+import Checkboxes from "../../commonComponents/Checkboxes"
 import RadioGroup from "../../commonComponents/RadioGroup";
 import RequiredMessage from "../../commonComponents/RequiredMessage";
 import { showError } from "../../utils";
@@ -267,22 +268,32 @@ const PersonForm = (props: Props) => {
           selectedRadio={patient.ethnicity}
           onChange={onPersonChange("ethnicity")}
         />
-        <RadioGroup
-          legend="Gender Identity"
+        <Checkboxes
+          // onChange={() => onPersonChange("gender")}
+          legend="What is your gender identity? (Choose all that apply)."
           name="gender"
-          buttons={GENDER}
-          selectedRadio={patient.gender}
-          onChange={onPersonChange("gender")}
+          onChange={(e) => {
+            if (e.target.checked) {
+              console.log('event here in if', e.target.checked);
+            } else {
+              console.log('event there in else');
+            }
+          }}
+          boxes={GENDER.map(({ label, value }) => ({
+            label,
+            value,
+            checked: false,
+          }))}
         />
         <RadioGroup
-          legend="Biological Sex"
+          legend="What is your assigned gender at birth? (typically this is the gender marker which appears on your original birth certificate) (Choose One)."
           name="genderAssignedAtBirth"
           buttons={GENDER_ASSIGNED_AT_BIRTH}
           selectedRadio={patient.genderAssignedAtBirth}
           onChange={onPersonChange("genderAssignedAtBirth")}
         />
         <RadioGroup
-          legend="Sexual Orientation"
+          legend="How would you describe your sexual orientation? (Choose all that apply)."
           name="sexualOrientation"
           buttons={SEXUAL_ORIENTATION}
           selectedRadio={patient.sexualOrientation}
