@@ -43,8 +43,6 @@ const PersonForm = (props: Props) => {
   const [patient, setPatient] = useState(props.patient);
   const [errors, setErrors] = useState<PersonErrors>({});
 
-  let sexualOrientationValues = SEXUAL_ORIENTATION;
-
   const clearError = useCallback(
     (field: keyof PersonErrors) => {
       if (errors[field]) {
@@ -69,16 +67,28 @@ const PersonForm = (props: Props) => {
     [patient, clearError]
   );
 
-  const toggleSexualOrientationCheckbox = <K extends keyof PersonFormData>(field: K) => (
-    value: PersonFormData[K]
-  ) => {
-    setFormChanged(true);
-    setPatient({ ...patient, [field]: value });
+  /**
+   * This function will set the checked boolean value for
+   * that gender identity <Checkbox>
+   */
+  const setGenderIdentity = (current: any, targetValue: any, targetChecked: any) => {
+    console.log('top setGenderIdentity - patient.gender', patient.gender); // should be null since it's not initiated on a new patient
+    console.log('in setGenderIdentity - current, targetValue, targetChecked - ', current, targetValue[0], targetChecked);
+    
+    // instantiate a patient with an empty gender identity array
+    if (patient.gender === undefined || patient.gender === null) {
+      patient.gender = [];
+    }
+    
+    // If newly checked gender is not on patient add it, otherwise, remove it.
+    patient.gender?.indexOf(targetValue[0]) === -1 ? patient.gender.push(targetValue[0]) : patient.gender.splice(patient.gender.indexOf(targetValue[0]), 1);
+    console.log('bottom setGenderIdentity - patient.gender', patient.gender); // should be null since it's not initiated on a new patient
   };
 
   const onPersonChange = <K extends keyof PersonFormData>(field: K) => (
     value: PersonFormData[K]
   ) => {
+    console.log('inside onPersonChange');
     setFormChanged(true);
     setPatient({ ...patient, [field]: value });
   };
@@ -280,20 +290,18 @@ const PersonForm = (props: Props) => {
         <Checkboxes
           legend="What is your gender identity? (Choose all that apply)."
           name="gender"
-          onChange={(e) => {
-            if (e.target.checked) {
-              GENDER.find((o, i) => {
-                if (o.value === e.target.value) {
-                  GENDER[i] = { label: o.label, value: o.value, checked: true };
-                  return true; // stop searching
-                }
-              });
-            }
-          }}
-          boxes={GENDER.map(({ label, value, checked }) => ({
+          // onInput={onPersonChange("role")} // trying to get the form to repaint w/ updated values
+          onChange={(e) =>
+            setGenderIdentity(
+              patient.gender,
+              [e.target.value],
+              !e.target.checked,
+            )
+          }
+          boxes={GENDER.map(({ label, value }) => ({
             label,
             value,
-            checked,
+            checked: (patient.gender?.indexOf(value) === -1) ? false : true,
           }))}
         />
         <RadioGroup
@@ -303,7 +311,7 @@ const PersonForm = (props: Props) => {
           selectedRadio={patient.genderAssignedAtBirth}
           onChange={onPersonChange("genderAssignedAtBirth")}
         />
-        <Checkboxes
+        {/* <Checkboxes
           legend="How would you describe your sexual orientation? (Choose all that apply)."
           name="sexualOrientation"
           onChange={(e) => {
@@ -311,9 +319,10 @@ const PersonForm = (props: Props) => {
               SEXUAL_ORIENTATION.find((o, i) => {
                 if (o.value === e.target.value) {
                   sexualOrientationValues[i] = { label: o.label, value: o.value, checked: true };
-                  toggleSexualOrientationCheckbox()
+                  // toggleSexualOrientationCheckbox()
                   return true; // stop searching
                 }
+                return false;
               });
             }
           }}
@@ -322,7 +331,7 @@ const PersonForm = (props: Props) => {
             value,
             checked,
           }))}
-        />
+        /> */}
       </FormGroup>
       <FormGroup title="Other">
         <YesNoRadioGroup

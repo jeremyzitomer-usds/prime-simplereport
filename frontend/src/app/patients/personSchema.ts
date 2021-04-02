@@ -93,7 +93,7 @@ export const allPersonErrors: Required<PersonErrors> = {
   race: "Race is incorrectly formatted",
   ethnicity: "Ethnicity is incorrectly formatted",
   gender: "Gender is incorrectly formatted",
-  genderAssignedAtBirth: "Biological Sex is incorrectly formatted",
+  genderAssignedAtBirth: "Gender Assigned at Birth is incorrectly formatted",
   sexualOrientation: "Sexual Orientation is incorrectly formatted",
   residentCongregateSetting:
     "Resident in congregate care/living setting? is required",

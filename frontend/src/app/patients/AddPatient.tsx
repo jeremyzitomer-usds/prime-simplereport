@@ -119,7 +119,7 @@ const AddPatient = () => {
             role: null,
             race: null,
             ethnicity: null,
-            gender: null,
+            gender: [],
             genderAssignedAtBirth: null,
             sexualOrientation: null,
             residentCongregateSetting: null,

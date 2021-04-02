@@ -61,13 +61,13 @@ export const ETHNICITY_VALUES: { value: Ethnicity; label: string }[] = [
   { label: "Not Hispanic", value: "not_hispanic" },
 ];
 
-export const GENDER: { value: Gender; label: string; checked?: boolean }[] = [
+export const GENDER: { value: string; label: string; checked?: boolean }[] = [
   { label: "Female, Woman, or Girl", value: "female" },
   { label: "Male, Man, or Boy", value: "male" },
   { label: "Nonbinary", value: "nonbinary" },
   { label: "Questioning", value: "questioning" },
-  { label: "A gender identity not listed (please specify):", value: "notlisted" },
   { label: "Prefer not to disclose", value: "notdisclosed" },
+  { label: "A gender identity not listed (please specify):", value: "notlisted" },
 ]
 
 export const GENDER_ASSIGNED_AT_BIRTH: { value: GenderAssignedAtBirth; label: string }[] = [
