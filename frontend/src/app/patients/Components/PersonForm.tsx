@@ -71,17 +71,30 @@ const PersonForm = (props: Props) => {
    * This function will set the checked boolean value for
    * that gender identity <Checkbox>
    */
-  const setGenderIdentity = (current: any, targetValue: any, targetChecked: any) => {
-    console.log('top setGenderIdentity - patient.gender', patient.gender); // should be null since it's not initiated on a new patient
-    console.log('in setGenderIdentity - current, targetValue, targetChecked - ', current, targetValue[0], targetChecked);
+  const setGenderIdentity = (current: any, targetName: any, targetValue: any, targetChecked: any) => {
+    // console.log('top setGenderIdentity - patient.gender', patient.gender); // should be null since it's not initiated on a new patient
+    console.log('in setGenderIdentity - current, targetName, targetValue, targetChecked - ', current, targetName, targetValue, targetChecked);
     
-    // instantiate a patient with an empty gender identity array
+    // IF necessary, instantiate a patient with an empty gender identity array
     if (patient.gender === undefined || patient.gender === null) {
       patient.gender = [];
     }
+
+    // IF patient.gender contains 'notlisted' && value is not in the targetChecked
+    if (targetName === 'gender-freeresponse') {
+      console.log('FREEFORM TEXT ENTRY - ', targetName, targetValue);
+      return;
+    }
     
     // If newly checked gender is not on patient add it, otherwise, remove it.
-    patient.gender?.indexOf(targetValue[0]) === -1 ? patient.gender.push(targetValue[0]) : patient.gender.splice(patient.gender.indexOf(targetValue[0]), 1);
+    // AND if the user is not trying to update the <input>
+    if (patient.gender?.indexOf(targetValue) === -1 && targetName !== 'gender-freeresponse') {
+      // If newly checked gender, push onto patient.gender
+      patient.gender.push(targetValue);
+    } else {
+      patient.gender.splice(patient.gender.indexOf(targetValue), 1);
+    }
+
     console.log('bottom setGenderIdentity - patient.gender', patient.gender); // should be null since it's not initiated on a new patient
   };
 
@@ -294,7 +307,8 @@ const PersonForm = (props: Props) => {
           onChange={(e) =>
             setGenderIdentity(
               patient.gender,
-              [e.target.value],
+              e.target.name,
+              e.target.value,
               !e.target.checked,
             )
           }
