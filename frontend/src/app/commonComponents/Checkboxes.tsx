@@ -26,6 +26,7 @@ interface Props {
   errorMessage?: string;
   validationStatus?: "error" | "success";
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClick?: any;
   required?: boolean;
   inputRef?: React.RefObject<HTMLInputElement>;
 }
@@ -37,6 +38,7 @@ const Checkboxes = (props: Props) => {
     legend,
     checkedValues = {},
     onChange,
+    onClick,
     legendSrOnly,
     validationStatus,
     errorMessage,
@@ -87,6 +89,7 @@ const Checkboxes = (props: Props) => {
                         checked={checked || checkedValues?.[value] || false}
                         id={uid(i)}
                         onChange={onChange}
+                        onClick={onClick}
                         type="checkbox"
                         value={value}
                         name={name}

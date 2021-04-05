@@ -24,6 +24,8 @@ import Select from "../../commonComponents/Select";
 
 import FacilitySelect from "./FacilitySelect";
 
+let patientGender: Array<string> = [];
+
 interface Props {
   patient: Nullable<PersonFormData>;
   patientId?: string;
@@ -73,14 +75,9 @@ const PersonForm = (props: Props) => {
    */
   const setGenderIdentity = (current: any, targetName: any, targetValue: any, targetChecked: any) => {
     // console.log('top setGenderIdentity - patient.gender', patient.gender); // should be null since it's not initiated on a new patient
-    console.log('in setGenderIdentity - current, targetName, targetValue, targetChecked - ', current, targetName, targetValue, targetChecked);
-    
-    // IF necessary, instantiate a patient with an empty gender identity array
-    if (patient.gender === undefined || patient.gender === null) {
-      patient.gender = [];
-    }
+    console.log('in setGenderIdentity - current, targetName, targetValue, targetChecked, patient - ', current, targetName, targetValue, targetChecked, patient);
 
-    // IF patient.gender contains 'notlisted' && value is not in the targetChecked
+    // IF patientGender contains 'notlisted' && value is not in the targetChecked
     if (targetName === 'gender-freeresponse') {
       console.log('FREEFORM TEXT ENTRY - ', targetName, targetValue);
       return;
@@ -88,20 +85,25 @@ const PersonForm = (props: Props) => {
     
     // If newly checked gender is not on patient add it, otherwise, remove it.
     // AND if the user is not trying to update the <input>
-    if (patient.gender?.indexOf(targetValue) === -1 && targetName !== 'gender-freeresponse') {
-      // If newly checked gender, push onto patient.gender
-      patient.gender.push(targetValue);
+    if (patientGender?.indexOf(targetValue) === -1 && targetName !== 'gender-freeresponse') {
+      // If newly checked gender, push onto patientGender
+      patientGender.push(targetValue);
+      console.log('INSIDE OF IF - ', patientGender);
     } else {
-      patient.gender.splice(patient.gender.indexOf(targetValue), 1);
+      patientGender.splice(patientGender.indexOf(targetValue), 1);
+      console.log('INSIDE OF ELSE - ', patientGender);
     }
 
-    console.log('bottom setGenderIdentity - patient.gender', patient.gender); // should be null since it's not initiated on a new patient
+    setFormChanged(true);
+    setPatient({ ...patient, gender: patientGender });
+
+    console.log('bottom setGenderIdentity - patientGender', patientGender); // should be null since it's not initiated on a new patient
   };
 
   const onPersonChange = <K extends keyof PersonFormData>(field: K) => (
     value: PersonFormData[K]
   ) => {
-    console.log('inside onPersonChange');
+    console.log('inside onPersonChange - patient, field, value - ', patient, field, value);
     setFormChanged(true);
     setPatient({ ...patient, [field]: value });
   };
@@ -153,6 +155,7 @@ const PersonForm = (props: Props) => {
   const commonInputProps = {
     formObject: patient,
     onChange: onPersonChange,
+    onClick: onPersonChange,
     validate: validateField,
     getValidationStatus: validationStatus,
     errors: errors,
@@ -304,14 +307,16 @@ const PersonForm = (props: Props) => {
           legend="What is your gender identity? (Choose all that apply)."
           name="gender"
           // onInput={onPersonChange("role")} // trying to get the form to repaint w/ updated values
-          onChange={(e) =>
+          onClick={onPersonChange("race")}
+          onChange={function(e){
+            onPersonChange("race");
             setGenderIdentity(
               patient.gender,
               e.target.name,
               e.target.value,
               !e.target.checked,
             )
-          }
+          }}
           boxes={GENDER.map(({ label, value }) => ({
             label,
             value,
