@@ -14,6 +14,13 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface TestEventRepository extends AuditedEntityRepository<TestEvent> {
 
+  public static final String BASE_ORG_QUERY =
+  "from #{#entityName} q "
+      + "where q.organization = :org "
+      + "and q.organization.isDeleted = false "
+      + "and q.patient.isDeleted = false ";
+  public static final String FACILITY_QUERY = BASE_ORG_QUERY + " and q.facility = :facility ";
+
   @Query("FROM #{#entityName} e WHERE e.patient = :p and e.facility in :facilities")
   public List<TestEvent> findAllByPatientAndFacilities(Person p, Collection<Facility> facilities);
 
@@ -65,4 +72,18 @@ public interface TestEventRepository extends AuditedEntityRepository<TestEvent> 
   // @EntityGraph(attributePaths = {"patient", "order", "order.patientLink"})
   // public List<TestEvent> getTestEventResults(Facility facility, Date
   // newerThanDate);
+
+@Query(FACILITY_QUERY + 
+  " and q.patient in :ps and q.createdAt >= :since")
+public List<TestEvent> findByPatientsAndFacilityAndDate(
+  Organization org,
+  Facility facility,
+  Collection<Person> ps,
+  Date since);
+
+@Query(FACILITY_QUERY + " and q.patient in :ps and (q.createdAt is null and q.createdAt is null)")
+public List<TestEvent> findByPatientsAndFacility(
+  Organization org,
+  Facility facility,
+  Collection<Person> ps);
 }

@@ -12,12 +12,16 @@ import gov.cdc.usds.simplereport.db.model.auxiliary.PersonRole;
 import gov.cdc.usds.simplereport.db.model.auxiliary.StreetAddress;
 import gov.cdc.usds.simplereport.db.model.auxiliary.TestResultDeliveryPreference;
 import gov.cdc.usds.simplereport.db.repository.PersonRepository;
+import gov.cdc.usds.simplereport.service.model.Demographic;
+
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
 import javax.validation.constraints.Size;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,6 +36,8 @@ public class PersonService {
   private final CurrentPatientContextHolder _patientContext;
   private final OrganizationService _os;
   private final PersonRepository _repo;
+
+  private static final String ARRAY_STRING_DELIMITER = "*~*~*";
 
   public static final int DEFAULT_PAGINATION_PAGEOFFSET = 0;
   public static final int DEFAULT_PAGINATION_PAGESIZE = 5000; // this is high because the searchBar
@@ -95,13 +101,99 @@ public class PersonService {
                 cb.lower(root.get(SpecField.PERSON_NAME).get(SpecField.LAST_NAME)), likeString));
   }
 
+  private Specification<Person> demographicFilter(Demographic demographic) {
+    return (root, query, cb) -> {
+        Predicate predicate = cb.conjunction();
+        if (demographic.getBornOnOrAfter().isPresent()) {
+          predicate = cb.and(
+              predicate,
+              cb.greaterThanOrEqualTo(root.get(SpecField.BIRTH_DATE), demographic.getBornOnOrAfter().get()));
+        }
+        if (demographic.getBornOnOrBefore().isPresent()) {
+          predicate = cb.and(
+              predicate,
+              cb.lessThanOrEqualTo(root.get(SpecField.BIRTH_DATE), demographic.getBornOnOrBefore().get()));
+        }
+        if (demographic.getRole().isPresent()) {
+          predicate = cb.and(
+              predicate,
+              cb.equal(root.get(SpecField.ROLE), demographic.getRole().get()));
+        }
+        if (demographic.getRace().isPresent()) {
+          predicate = cb.and(
+              predicate,
+              cb.equal(root.get(SpecField.RACE), demographic.getRace().get()));
+        }
+        if (demographic.getEthnicity().isPresent()) {
+          predicate = cb.and(
+              predicate,
+              cb.equal(root.get(SpecField.ETHNICITY), demographic.getEthnicity().get()));
+        }
+        if (demographic.getGender().isPresent()) {
+          Expression<List<String>> genderExp = root.get(SpecField.GENDER);
+          Expression<String> genderArrayStr = 
+              cb.function(
+                  "ARRAY_TO_STRING", 
+                  String.class, 
+                  genderExp,
+                  cb.literal(ARRAY_STRING_DELIMITER));
+          for (String gender : demographic.getGender().get()) {
+            predicate = 
+                cb.and(
+                    predicate, 
+                    cb.or(
+                        cb.like(genderArrayStr,"%"+ARRAY_STRING_DELIMITER+gender+ARRAY_STRING_DELIMITER+"%"),
+                        cb.like(genderArrayStr,gender+ARRAY_STRING_DELIMITER+"%"),
+                        cb.like(genderArrayStr,"%"+ARRAY_STRING_DELIMITER+gender),
+                        cb.like(genderArrayStr,gender)));
+          }
+        }
+        if (demographic.getGenderAssignedAtBirth().isPresent()) {
+          predicate = cb.and(
+              predicate,
+              cb.equal(root.get(SpecField.GENDER_ASSIGNED_AT_BIRTH), demographic.getGenderAssignedAtBirth().get()));
+        }
+        if (demographic.getSexualOrientation().isPresent()) {
+          Expression<List<String>> soExp = root.get(SpecField.SEXUAL_ORIENTATION);
+          Expression<String> soArrayStr = 
+              cb.function(
+                  "ARRAY_TO_STRING", 
+                  String.class, 
+                  soExp,
+                  cb.literal(ARRAY_STRING_DELIMITER));
+          for (String so : demographic.getSexualOrientation().get()) {
+            predicate = 
+                cb.and(
+                    predicate,
+                    cb.or(
+                        cb.like(soArrayStr,"%"+ARRAY_STRING_DELIMITER+so+ARRAY_STRING_DELIMITER+"%"),
+                        cb.like(soArrayStr,so+ARRAY_STRING_DELIMITER+"%"),
+                        cb.like(soArrayStr,"%"+ARRAY_STRING_DELIMITER+so),
+                        cb.like(soArrayStr,so)));
+          }
+        }
+        if (demographic.getResidentCongregateSetting().isPresent()) {
+          predicate = cb.and(
+              predicate,
+              cb.equal(root.get(SpecField.RESIDENT_CONGREGATE_SETTING), demographic.getResidentCongregateSetting().get()));
+        }
+        if (demographic.getEmployedInHealthcare().isPresent()) {
+          predicate = cb.and(
+              predicate,
+              cb.equal(root.get(SpecField.EMPLOYED_IN_HEALTHCARE), demographic.getEmployedInHealthcare().get()));
+        }
+
+        return predicate;
+    };
+  }
+
   private Specification<Person> isDeletedFilter(boolean isDeleted) {
     return (root, query, cb) -> cb.equal(root.get(SpecField.IS_DELETED), isDeleted);
   }
 
   // called by List function and Count function
   protected Specification<Person> buildPersonSearchFilter(
-      UUID facilityId, boolean isArchived, String namePrefixMatch) {
+      UUID facilityId, boolean isArchived, String namePrefixMatch, Demographic demographic) {
     // build up filter based on params
     Specification<Person> filter = inCurrentOrganizationFilter().and(isDeletedFilter(isArchived));
     if (facilityId == null) {
@@ -112,6 +204,9 @@ public class PersonService {
 
     if (StringUtils.isNotBlank(namePrefixMatch)) {
       filter = filter.and(nameMatchesFilter(namePrefixMatch));
+    }
+    if (demographic != null) {
+      filter = filter.and(demographicFilter(demographic));
     }
     return filter;
   }
@@ -127,7 +222,12 @@ public class PersonService {
    */
   @AuthorizationConfiguration.RequireSpecificPatientSearchPermission
   public List<Person> getPatients(
-      UUID facilityId, int pageOffset, int pageSize, boolean isArchived, String namePrefixMatch) {
+      UUID facilityId, 
+      int pageOffset, 
+      int pageSize, 
+      boolean isArchived, 
+      String namePrefixMatch,
+      Demographic demographic) {
     if (pageOffset < 0) {
       pageOffset = DEFAULT_PAGINATION_PAGEOFFSET;
     }
@@ -140,8 +240,29 @@ public class PersonService {
     }
 
     return _repo.findAll(
-        buildPersonSearchFilter(facilityId, isArchived, namePrefixMatch),
+        buildPersonSearchFilter(facilityId, isArchived, namePrefixMatch, demographic),
         PageRequest.of(pageOffset, pageSize, NAME_SORT));
+  }
+
+  /**
+   * @param facilityId If null, then it means across whole organization
+   * @param isArchived Default is false. true will ONLY show deleted users
+   * @param namePrefixMatch Null returns all users, any string will filter by first,middle,last
+   *     names that start with these characters. Case insenstive. If fewer than
+   * @return A list of matching patients.
+   */
+  @AuthorizationConfiguration.RequireSpecificPatientSearchPermission
+  public List<Person> getPatients(
+      UUID facilityId, 
+      boolean isArchived, 
+      String namePrefixMatch,
+      Demographic demographic) {
+    if (namePrefixMatch != null && namePrefixMatch.trim().length() < MINIMUM_CHAR_FOR_SEARCH) {
+      return List.of(); // empty list
+    }
+
+    return _repo.findAll(
+        buildPersonSearchFilter(facilityId, isArchived, namePrefixMatch, demographic));
   }
 
   @AuthorizationConfiguration.RequireSpecificPatientSearchPermission
@@ -149,7 +270,7 @@ public class PersonService {
     if (namePrefixMatch != null && namePrefixMatch.trim().length() < MINIMUM_CHAR_FOR_SEARCH) {
       return 0;
     }
-    return _repo.count(buildPersonSearchFilter(facilityId, isArchived, namePrefixMatch));
+    return _repo.count(buildPersonSearchFilter(facilityId, isArchived, namePrefixMatch, null));
   }
 
   // NO PERMISSION CHECK (make sure the caller has one!) getPatient()

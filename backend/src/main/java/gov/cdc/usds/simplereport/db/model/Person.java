@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -306,6 +307,15 @@ public class Person extends OrganizationScopedEternalEntity {
     public static final String FIRST_NAME = "firstName";
     public static final String MIDDLE_NAME = "middleName";
     public static final String LAST_NAME = "lastName";
+    public static final String BIRTH_DATE = "birthDate";
+    public static final String ROLE = "role";
+    public static final String RACE = "race";
+    public static final String ETHNICITY = "ethnicity";
+    public static final String GENDER = "gender";
+    public static final String GENDER_ASSIGNED_AT_BIRTH = "genderAssignedAtBirth";
+    public static final String SEXUAL_ORIENTATION = "sexualOrientation";
+    public static final String RESIDENT_CONGREGATE_SETTING = "residentCongregateSetting";
+    public static final String EMPLOYED_IN_HEALTHCARE = "employedInHealthcare";
 
     private SpecField() {} // sonarcloud codesmell
   }

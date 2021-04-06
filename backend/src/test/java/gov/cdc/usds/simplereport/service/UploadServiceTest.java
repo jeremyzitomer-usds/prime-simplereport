@@ -69,7 +69,7 @@ class UploadServiceTest extends BaseServiceTest<UploadService> {
     }
 
     final List<Person> patients =
-        this._ps.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null);
+        this._ps.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null);
     assertAll(
         () -> assertEquals(1, patients.size()),
         () -> assertEquals("Best", patients.get(0).getLastName()),
@@ -91,7 +91,7 @@ class UploadServiceTest extends BaseServiceTest<UploadService> {
               "Should fail to parse. Missing facilityId");
 
       final List<Person> patients =
-          this._ps.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null);
+          this._ps.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null);
       assertEquals(0, patients.size());
     }
   }
@@ -110,7 +110,7 @@ class UploadServiceTest extends BaseServiceTest<UploadService> {
           "Should have correct error message");
       assertEquals(
           0,
-          this._ps.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null).size(),
+          this._ps.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null).size(),
           "Should not have any patients");
     }
   }
@@ -150,7 +150,7 @@ class UploadServiceTest extends BaseServiceTest<UploadService> {
       this._service.processPersonCSV(inputStream);
     }
     List<Person> patients =
-        this._ps.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null);
+        this._ps.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null);
     assertEquals(1, patients.size(), "Should have 1 patient");
   }
 }

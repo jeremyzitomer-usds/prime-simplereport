@@ -12,6 +12,8 @@ import org.springframework.data.jpa.repository.Query;
 /** Interface specification for fetching and manipulating {@link Person} entities */
 public interface PersonRepository extends EternalAuditedEntityRepository<Person> {
 
+  public List<Person> findAll(Specification<Person> searchSpec);
+
   public List<Person> findAll(Specification<Person> searchSpec, Pageable p);
 
   public int count(Specification<Person> searchSpec);

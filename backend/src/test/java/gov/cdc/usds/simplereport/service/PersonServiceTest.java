@@ -122,12 +122,12 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
         false,
         false);
     List<Person> all =
-        _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null);
+        _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null);
     assertEquals(3, all.size());
     // includes patients whose facility is null
     List<Person> site1Patients =
         _service.getPatients(
-            _site1.getInternalId(), PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null);
+            _site1.getInternalId(), PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null);
     assertEquals(2, site1Patients.size());
   }
 
@@ -263,7 +263,7 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
     TestUserIdentities.setFacilityAuthorities(fac);
     _service.setIsDeleted(p.getInternalId(), true);
     assertEquals(
-        0, _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null).size());
+        0, _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null).size());
   }
 
   @Test
@@ -295,7 +295,7 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
 
     _service.setIsDeleted(p.getInternalId(), true);
     assertEquals(
-        0, _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null).size());
+        0, _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null).size());
   }
 
   @Test
@@ -306,9 +306,9 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
     TestUserIdentities.setFacilityAuthorities(fac);
 
     assertSecurityError(
-        () -> _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null));
+        () -> _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null, null));
     assertSecurityError(
-        () -> _service.getPatients(facilityId, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null));
+        () -> _service.getPatients(facilityId, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null, null));
   }
 
   @Test
@@ -339,23 +339,23 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
             false);
 
     assertEquals(
-        1, _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null).size());
+        1, _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null).size());
     Person deletedPerson = _service.setIsDeleted(p.getInternalId(), true);
 
     assertTrue(deletedPerson.isDeleted());
     assertEquals(
-        0, _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null).size());
+        0, _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null).size());
     assertEquals(
         0,
-        _service.getPatients(facilityId, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null).size());
+        _service.getPatients(facilityId, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null).size());
 
     List<Person> result =
-        _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null);
+        _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null, null);
     assertEquals(1, result.size());
     assertTrue(result.get(0).isDeleted());
     assertEquals(
         1,
-        _service.getPatients(facilityId, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null).size());
+        _service.getPatients(facilityId, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null, null).size());
   }
 
   @Test
@@ -364,7 +364,7 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
     makedata(false);
     // gets all patients across the org
     List<Person> patients =
-        _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null);
+        _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null);
     assertPatientList(patients, CHARLES, FRANK, BRAD, DEXTER, ELIZABETH, AMOS);
   }
 
@@ -374,11 +374,11 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
     makedata(false);
     List<Person> patients =
         _service.getPatients(
-            _site1.getInternalId(), PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null);
+            _site1.getInternalId(), PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null);
     assertPatientList(patients, CHARLES, BRAD, ELIZABETH, AMOS);
     patients =
         _service.getPatients(
-            _site2.getInternalId(), PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null);
+            _site2.getInternalId(), PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null);
     assertPatientList(patients, FRANK, BRAD, DEXTER, AMOS);
   }
 
@@ -386,10 +386,10 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
   @WithSimpleReportOrgAdminUser
   void getPatients_pagination() {
     makedata(true);
-    List<Person> patients_org_page0 = _service.getPatients(null, 0, 5, false, null);
-    List<Person> patients_org_page1 = _service.getPatients(null, 1, 5, false, null);
-    List<Person> patients_org_page2 = _service.getPatients(null, 2, 5, false, null);
-    List<Person> patients_org_page3 = _service.getPatients(null, 3, 5, false, null);
+    List<Person> patients_org_page0 = _service.getPatients(null, 0, 5, false, null, null);
+    List<Person> patients_org_page1 = _service.getPatients(null, 1, 5, false, null, null);
+    List<Person> patients_org_page2 = _service.getPatients(null, 2, 5, false, null, null);
+    List<Person> patients_org_page3 = _service.getPatients(null, 3, 5, false, null, null);
 
     assertPatientList(patients_org_page0, CHARLES, FRANK, JANNELLE, BRAD, DEXTER);
     assertPatientList(patients_org_page1, KACEY, ELIZABETH, LEELOO, AMOS, IAN);
@@ -397,11 +397,11 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
     assertEquals(0, patients_org_page3.size());
 
     List<Person> patients_site2_page0 =
-        _service.getPatients(_site2.getInternalId(), 0, 4, false, null);
+        _service.getPatients(_site2.getInternalId(), 0, 4, false, null, null);
     List<Person> patients_site2_page1 =
-        _service.getPatients(_site2.getInternalId(), 1, 4, false, null);
+        _service.getPatients(_site2.getInternalId(), 1, 4, false, null, null);
     List<Person> patients_site2_page2 =
-        _service.getPatients(_site2.getInternalId(), 2, 4, false, null);
+        _service.getPatients(_site2.getInternalId(), 2, 4, false, null, null);
 
     assertPatientList(patients_site2_page0, FRANK, JANNELLE, BRAD, DEXTER);
     assertPatientList(patients_site2_page1, KACEY, LEELOO, AMOS);
@@ -418,30 +418,30 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
 
     // delete some data to verify achived works as expepected
     // delete Charles (_site1)
-    Person charles = _service.getPatients(null, 0, 5, false, null).get(0);
+    Person charles = _service.getPatients(null, 0, 5, false, null, null).get(0);
     _service.setIsDeleted(charles.getInternalId(), true);
     // Delete Frank (_site2)
-    Person frank = _service.getPatients(site2Id, 0, 5, false, null).get(0);
+    Person frank = _service.getPatients(site2Id, 0, 5, false, null, null).get(0);
     _service.setIsDeleted(frank.getInternalId(), true);
 
     // all facilities, not deleted, "ma"
-    List<Person> patients = _service.getPatients(null, 0, 100, false, "ma");
+    List<Person> patients = _service.getPatients(null, 0, 100, false, "ma", null);
     assertPatientList(patients, JANNELLE, KACEY, ELIZABETH, HEINRICK, GALE);
 
     // site2, not deleted, "ma"
-    patients = _service.getPatients(site2Id, 0, 100, false, "ma");
+    patients = _service.getPatients(site2Id, 0, 100, false, "ma", null);
     assertPatientList(patients, JANNELLE, KACEY);
 
     // site1, IS deleted, "ma"
-    patients = _service.getPatients(site1Id, 0, 100, true, "ma");
+    patients = _service.getPatients(site1Id, 0, 100, true, "ma", null);
     assertPatientList(patients, CHARLES);
 
     // all facilities, not deleted, "mar"
-    patients = _service.getPatients(null, 0, 100, false, "mar");
+    patients = _service.getPatients(null, 0, 100, false, "mar", null);
     assertPatientList(patients, JANNELLE, ELIZABETH, HEINRICK, GALE);
 
     // all facilities, not deleted, "MARTHA"
-    patients = _service.getPatients(null, 0, 100, false, "MARTHA");
+    patients = _service.getPatients(null, 0, 100, false, "MARTHA", null);
     assertPatientList(patients, JANNELLE, ELIZABETH);
 
     assertEquals(0, _service.getPatientsCount(null, false, "M"));
@@ -456,14 +456,14 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
     UUID site1Id = _site1.getInternalId();
     UUID site2Id = _site2.getInternalId();
 
-    List<Person> patients_org_page0 = _service.getPatients(null, 0, 100, false, null);
+    List<Person> patients_org_page0 = _service.getPatients(null, 0, 100, false, null, null);
     assertEquals(patients_org_page0.size(), _service.getPatientsCount(null, false, null));
     assertEquals(12, _service.getPatientsCount(null, false, null));
     // count includes patients for site2 AND facility=null
     assertEquals(7, _service.getPatientsCount(site2Id, false, null));
 
     // delete a couple, verify counts
-    List<Person> patients_site2 = _service.getPatients(site2Id, 0, 100, false, null);
+    List<Person> patients_site2 = _service.getPatients(site2Id, 0, 100, false, null, null);
 
     // delete Charles (_site1)
     _service.setIsDeleted(patients_org_page0.get(0).getInternalId(), true);
@@ -538,18 +538,18 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
 
     assertThrows(
         AccessDeniedException.class,
-        () -> _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null));
+        () -> _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null));
     assertThrows(
         AccessDeniedException.class,
-        () -> _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null));
+        () -> _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null));
     assertThrows(
         AccessDeniedException.class,
-        () -> _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null));
-    _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, "ma");
-    _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, "ma");
+        () -> _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null, null));
+    _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, "ma", null);
+    _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, "ma", null);
     assertThrows(
         AccessDeniedException.class,
-        () -> _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, "ma"));
+        () -> _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, "ma", null));
   }
 
   @Test
@@ -559,20 +559,20 @@ class PersonServiceTest extends BaseServiceTest<PersonService> {
 
     UUID site1Id = _site1.getInternalId();
 
-    _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null);
+    _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null);
     assertThrows(
         AccessDeniedException.class,
-        () -> _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null));
+        () -> _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null, null));
     assertThrows(
         AccessDeniedException.class,
-        () -> _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null));
+        () -> _service.getPatients(null, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null, null));
 
     TestUserIdentities.setFacilityAuthorities(_site1);
     _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, false, null);
     // standard users still can't access archived patients
     assertThrows(
         AccessDeniedException.class,
-        () -> _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null));
+        () -> _service.getPatients(site1Id, PATIENT_PAGEOFFSET, PATIENT_PAGESIZE, true, null, null, null));
   }
 
   private void makedata(boolean extraPatients) {

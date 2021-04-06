@@ -19,12 +19,16 @@ import gov.cdc.usds.simplereport.db.model.auxiliary.TestResultDeliveryPreference
 import gov.cdc.usds.simplereport.db.repository.PatientAnswersRepository;
 import gov.cdc.usds.simplereport.db.repository.TestEventRepository;
 import gov.cdc.usds.simplereport.db.repository.TestOrderRepository;
+import gov.cdc.usds.simplereport.service.model.Demographic;
+import gov.cdc.usds.simplereport.service.model.TestResultsSummary;
 import gov.cdc.usds.simplereport.service.sms.SmsService;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -114,6 +118,32 @@ public class TestOrderService {
     return _repo.fetchQueueItemById(org, id).orElseThrow(TestOrderService::noSuchOrderFound);
   }
 
+  @Transactional(readOnly = true)
+  @AuthorizationConfiguration.RequirePermissionReadResultListAtFacility
+  public TestResultsSummary getTestResultsSummary(
+      UUID facilityId,
+      Demographic demographic, 
+      Optional<LocalDate> since) {
+    Organization org = _os.getCurrentOrganization();
+    Facility fac = _os.getFacilityInCurrentOrg(facilityId);
+    List<Person> patients = _ps.getPatients(facilityId, false, null, demographic);
+    List<TestEvent> tests = 
+        since.isPresent() 
+            ? _terepo.findByPatientsAndFacilityAndDate(org, fac, patients, 
+                  Date.from(since.get().atStartOfDay(ZoneId.systemDefault()).toInstant()))
+            : _terepo.findByPatientsAndFacility(org, fac, patients);
+    int totalTests = tests.size();
+    long totalPositive = tests.stream().filter(t -> t.getResult().equals(TestResult.POSITIVE)).count();
+    float percentPositive = totalTests == 0 ? 0 : 100 * ((float) totalPositive / (float) totalTests);
+    return new TestResultsSummary(
+        fac,
+        demographic,
+        totalTests,
+        percentPositive,
+        since
+    );
+  }
+
   @AuthorizationConfiguration.RequirePermissionUpdateTestForTestOrder
   @Deprecated // switch to specifying device-specimen combo
   public TestOrder editQueueItem(
@@ -144,6 +174,8 @@ public class TestOrderService {
     order.setDeviceSpecimen(deviceSpecimen);
     order.setResult(result);
     order.setDateTestedBackdate(dateTested);
+    System.out.print("DATE_TESTED\n\n\n\n\n");
+    System.out.print(dateTested);
     order.markComplete();
 
     TestEvent testEvent = new TestEvent(order);

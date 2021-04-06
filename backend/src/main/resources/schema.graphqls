@@ -121,6 +121,19 @@ type Patient @requiredPermissions(anyOf: ["READ_PATIENT_LIST", "SEARCH_PATIENTS"
   testResultDelivery: TestResultDeliveryPreference
 }
 
+type Demographic {
+  bornOnOrAfter: LocalDate
+  bornOnOrBefore: LocalDate
+  role: String
+  race: String
+  ethnicity: String
+  gender: [String!]
+  genderAssignedAtBirth: String
+  sexualOrientation: [String!]
+  residentCongregateSetting: Boolean
+  employedInHealthcare: Boolean
+}
+
 type Facility {
   id: ID
   name: String
@@ -199,6 +212,13 @@ type TestResult {
   createdBy: ApiUser
   patientLink: PatientLink
 }
+type TestResultsSummary {
+  facility: Facility
+  demographic: Demographic
+  totalTests: Int
+  percentPositive: Float
+  since: LocalDate
+}
 
 # Note: we assume a user's email and login username are the same thing.
 type User {
@@ -261,6 +281,20 @@ type Query {
   ): [TestResult] @requiredPermissions(allOf: ["READ_RESULT_LIST"])
   testResultsCount(facilityId: ID!): Int @requiredPermissions(allOf: ["READ_RESULT_LIST"])
   testResult(id: ID!): TestResult @requiredPermissions(allOf: ["READ_RESULT_LIST"])
+  testResultsSummary(
+    facilityId: ID!
+    bornOnOrAfter: LocalDate
+    bornOnOrBefore: LocalDate
+    role: String
+    race: String
+    ethnicity: String
+    gender: [String!]
+    genderAssignedAtBirth: String
+    sexualOrientation: [String!]
+    residentCongregateSetting: Boolean
+    employedInHealthcare: Boolean
+    since: LocalDate
+  ): TestResultsSummary @requiredPermissions(allOf: ["READ_RESULT_LIST"])
   users: [User] @requiredPermissions(allOf: ["MANAGE_USERS"])
   whoami: User!
 }

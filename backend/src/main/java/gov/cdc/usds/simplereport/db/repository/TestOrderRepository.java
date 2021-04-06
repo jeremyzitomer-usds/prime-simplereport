@@ -4,6 +4,9 @@ import gov.cdc.usds.simplereport.db.model.Facility;
 import gov.cdc.usds.simplereport.db.model.Organization;
 import gov.cdc.usds.simplereport.db.model.Person;
 import gov.cdc.usds.simplereport.db.model.TestOrder;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,9 +21,16 @@ public interface TestOrderRepository extends AuditedEntityRepository<TestOrder> 
           + "where q.organization = :org "
           + "and q.organization.isDeleted = false "
           + "and q.patient.isDeleted = false ";
+  public static final String BASE_ORG_INCLUDE_DELETED_QUERY =
+  "from #{#entityName} q "
+      + "where q.organization = :org "
+      + "and q.organization.isDeleted = false ";
   public static final String FACILITY_QUERY = BASE_ORG_QUERY + " and q.facility = :facility ";
+  public static final String FACILITY_INCLUDE_DELETED_QUERY = 
+      BASE_ORG_INCLUDE_DELETED_QUERY + " and q.facility = :facility ";
   public static final String IS_PENDING = " and q.orderStatus = 'PENDING' ";
   public static final String IS_COMPLETED = " and q.orderStatus = 'COMPLETED' ";
+  public static final String IS_NOT_REMOVED = " and q.correctionStatus != 'REMOVED'";
   public static final String ORDER_CREATION_ORDER = " order by q.createdAt ";
   public static final String RESULT_RECENT_ORDER = " order by updatedAt desc ";
 
