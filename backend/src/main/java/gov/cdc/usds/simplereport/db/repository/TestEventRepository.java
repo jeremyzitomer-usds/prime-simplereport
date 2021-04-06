@@ -81,7 +81,7 @@ public List<TestEvent> findByPatientsAndFacilityAndDate(
   Collection<Person> ps,
   Date since);
 
-@Query(FACILITY_QUERY + " and q.patient in :ps and (q.createdAt is null and q.createdAt is null)")
+@Query(FACILITY_QUERY + " and q.patient in :ps")
 public List<TestEvent> findByPatientsAndFacility(
   Organization org,
   Facility facility,

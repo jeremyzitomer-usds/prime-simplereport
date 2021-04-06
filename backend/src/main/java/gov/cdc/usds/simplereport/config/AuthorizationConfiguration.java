@@ -160,6 +160,22 @@ public class AuthorizationConfiguration {
   public @interface RequirePermissionReadArchivedPatientList {}
 
   /**
+   * Require the current user to have the {@link UserPermission#READ_PATIENT_LIST} permission at the
+   * facility with UUID {@code facilityId}.
+   *
+   * <p>NOTE: any method with this annotation must have a parameter {@code facilityId}.
+   */
+  @Retention(RUNTIME)
+  @Target(METHOD)
+  @PreAuthorize(      
+      SPEL_IS_VALID
+          + " && "
+          + SPEL_HAS_PERMISSION_READ_PATIENT_LIST
+          + " && "
+          + SPEL_CAN_ACCESS_FACILITY)
+  public @interface RequirePermissionReadPatientListAtFacility {}
+
+  /**
    * Require the current user to have the {@link UserPermission#READ_RESULT_LIST} permission for the
    * test event with UUID {@code testEventId}.
    *

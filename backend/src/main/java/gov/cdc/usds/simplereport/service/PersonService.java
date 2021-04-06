@@ -13,10 +13,14 @@ import gov.cdc.usds.simplereport.db.model.auxiliary.StreetAddress;
 import gov.cdc.usds.simplereport.db.model.auxiliary.TestResultDeliveryPreference;
 import gov.cdc.usds.simplereport.db.repository.PersonRepository;
 import gov.cdc.usds.simplereport.service.model.Demographic;
+import gov.cdc.usds.simplereport.service.model.DemographicValues;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -292,6 +296,94 @@ public class PersonService {
         .findByIdAndOrganization(patientId, _os.getCurrentOrganization(), true)
         .orElseThrow(
             () -> new IllegalGraphqlArgumentException("No patient with that ID was found"));
+  }
+
+  @AuthorizationConfiguration.RequirePermissionReadPatientListAtFacility
+  public DemographicValues getDemographicValues(UUID facilityId) {
+    Specification<Person> filter = inCurrentOrganizationFilter();
+    if (facilityId == null) {
+      filter = filter.and(inAccessibleFacilitiesFilter());
+    } else {
+      filter = filter.and(inFacilityFilter(facilityId));
+    }
+    List<Person> patients = _repo.findAll(filter);
+    Map<PersonRole, Integer> roles = new HashMap<>();
+    Map<String, Integer> races = new HashMap<>();
+    Map<String, Integer> ethnicities = new HashMap<>();
+    Map<String, Integer> genders = new HashMap<>();
+    Map<String, Integer> gendersAssignedAtBirth = new HashMap<>();
+    Map<String, Integer> sexualOrientations = new HashMap<>();
+    for (Person p : patients) {
+      if (p.getRole() != null) {
+        if (roles.containsKey(p.getRole())) {
+          roles.put(p.getRole(), roles.get(p.getRole())+1);
+        } else {
+          roles.put(p.getRole(), 1);
+        }
+      }
+      if (p.getRace() != null) {
+        if (races.containsKey(p.getRace())) {
+          races.put(p.getRace(), races.get(p.getRace())+1);
+        } else {
+          races.put(p.getRace(), 1);
+        }
+      }
+      if (p.getEthnicity() != null) {
+        if (ethnicities.containsKey(p.getEthnicity())) {
+          ethnicities.put(p.getEthnicity(), ethnicities.get(p.getEthnicity())+1);
+        } else {
+          ethnicities.put(p.getEthnicity(), 1);
+        }
+      }
+      if (p.getGender() != null) {
+        for (String gender : p.getGender()) {
+          if (genders.containsKey(gender)) {
+            genders.put(gender, genders.get(gender)+1);
+          } else {
+            genders.put(gender, 1);
+          }
+        }
+      }
+      if (p.getGenderAssignedAtBirth() != null) {
+        if (gendersAssignedAtBirth.containsKey(p.getGenderAssignedAtBirth())) {
+          gendersAssignedAtBirth.put(
+              p.getGenderAssignedAtBirth(), 
+              gendersAssignedAtBirth.get(p.getGenderAssignedAtBirth())+1);
+        } else {
+          gendersAssignedAtBirth.put(p.getGenderAssignedAtBirth(), 1);
+        }
+      }
+      if (p.getSexualOrientation() != null) {
+        for (String so : p.getSexualOrientation()) {
+          if (sexualOrientations.containsKey(so)) {
+            sexualOrientations.put(so, sexualOrientations.get(so)+1);
+          } else {
+            sexualOrientations.put(so, 1);
+          }
+        }
+      }
+    }
+
+    return new DemographicValues(
+        roles.keySet().stream()
+            .sorted((a,b)->Integer.compare(roles.get(a), roles.get(b)))
+            .collect(Collectors.toList()),
+        races.keySet().stream()
+            .sorted((a,b)->Integer.compare(races.get(a), races.get(b)))
+            .collect(Collectors.toList()),
+        ethnicities.keySet().stream()
+            .sorted((a,b)->Integer.compare(ethnicities.get(a), ethnicities.get(b)))
+            .collect(Collectors.toList()),
+        genders.keySet().stream()
+            .sorted((a,b)->Integer.compare(genders.get(a), genders.get(b)))
+            .collect(Collectors.toList()),
+        gendersAssignedAtBirth.keySet().stream()
+            .sorted((a,b)->Integer.compare(gendersAssignedAtBirth.get(a), gendersAssignedAtBirth.get(b)))
+            .collect(Collectors.toList()),
+        sexualOrientations.keySet().stream()
+            .sorted((a,b)->Integer.compare(sexualOrientations.get(a), sexualOrientations.get(b)))
+            .collect(Collectors.toList())
+    );
   }
 
   @AuthorizationConfiguration.RequirePermissionCreatePatientAtFacility

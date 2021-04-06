@@ -134,6 +134,15 @@ type Demographic {
   employedInHealthcare: Boolean
 }
 
+type DemographicValues {
+  roles: [String!]!
+  races: [String!]!
+  ethnicities: [String!]!
+  genders: [String!]!
+  gendersAssignedAtBirth: [String!]!
+  sexualOrientations: [String!]!
+}
+
 type Facility {
   id: ID
   name: String
@@ -269,6 +278,7 @@ type Query {
     namePrefixMatch: String
   ): Int @requiredPermissions(anyOf: ["SEARCH_PATIENTS", "READ_PATIENT_LIST"])
   patient(id: ID!): Patient
+  demographicValues(facilityId: ID!): DemographicValues!
   organization: Organization
   organizations: [Organization]
   queue(

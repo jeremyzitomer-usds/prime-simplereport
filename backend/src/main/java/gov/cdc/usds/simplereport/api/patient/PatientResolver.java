@@ -3,6 +3,7 @@ package gov.cdc.usds.simplereport.api.patient;
 import gov.cdc.usds.simplereport.config.AuthorizationConfiguration;
 import gov.cdc.usds.simplereport.db.model.Person;
 import gov.cdc.usds.simplereport.service.PersonService;
+import gov.cdc.usds.simplereport.service.model.DemographicValues;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import java.util.List;
 import java.util.UUID;
@@ -29,5 +30,9 @@ public class PatientResolver implements GraphQLQueryResolver {
   @AuthorizationConfiguration.RequirePermissionSearchTargetPatient
   public Person getPatient(UUID patientId) {
     return ps.getPatientNoPermissionsCheck(patientId);
+  }
+
+  public DemographicValues getDemographicValues(UUID facilityId) {
+    return ps.getDemographicValues(facilityId);
   }
 }
