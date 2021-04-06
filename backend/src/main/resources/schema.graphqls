@@ -132,6 +132,7 @@ type Demographic {
   sexualOrientation: [String!]
   residentCongregateSetting: Boolean
   employedInHealthcare: Boolean
+  description: String
 }
 
 type DemographicValues {

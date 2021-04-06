@@ -80,4 +80,31 @@ public class Demographic {
   public Optional<Boolean> getEmployedInHealthcare() {
     return employedInHealthcare;
   }
+
+  public String getDescription() {
+    return ((race.isPresent() ? race.get() + " " : "") +
+        (ethnicity.isPresent() ? ethnicity.get() + " " : "") +
+        (sexualOrientation.isPresent() && !sexualOrientation.get().isEmpty() 
+            ? String.join(" ", sexualOrientation.get()) + " " 
+            : "") +
+        (gender.isPresent() && !gender.get().isEmpty() 
+            ? String.join(" ", gender.get()) + " " 
+            : "") +
+        (genderAssignedAtBirth.isPresent() ? "assigned " + genderAssignedAtBirth.get() + " at birth " : "") +
+        (role.isPresent() ? "in " + role.get().toString().toLowerCase() + "role " : "") +
+        (bornOnOrAfter.isPresent() && bornOnOrBefore.isPresent()
+            ? "born between " + bornOnOrAfter.get().toString() + 
+              " and " + bornOnOrBefore.get().toString() + " "
+            : bornOnOrAfter.isPresent() ? "born after " + bornOnOrAfter.get().toString() + " "
+            : bornOnOrBefore.isPresent() ? "born before " + bornOnOrBefore.get().toString() + " "
+            : "") +
+        (residentCongregateSetting.isPresent() && employedInHealthcare.isPresent()
+            ? (residentCongregateSetting.get() ? "" : "not ") + "in congregate living and " +
+              (employedInHealthcare.get() ? "" : "not ") + "employed in healthcare " 
+            : residentCongregateSetting.isPresent() 
+                ? (residentCongregateSetting.get() ? "" : "not ") + "in congregate living "
+            : employedInHealthcare.isPresent() 
+                ? (employedInHealthcare.get() ? "" : "not ") + "employed in healthcare "
+            : "")).trim();
+  }
 }
