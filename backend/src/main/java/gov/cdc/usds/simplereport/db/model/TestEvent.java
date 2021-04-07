@@ -3,7 +3,12 @@ package gov.cdc.usds.simplereport.db.model;
 import gov.cdc.usds.simplereport.db.model.auxiliary.AskOnEntrySurvey;
 import gov.cdc.usds.simplereport.db.model.auxiliary.TestCorrectionStatus;
 import gov.cdc.usds.simplereport.db.model.auxiliary.TestResult;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -21,6 +26,8 @@ import org.slf4j.LoggerFactory;
 @AttributeOverride(name = "result", column = @Column(nullable = false))
 public class TestEvent extends BaseTestInfo {
   private static final Logger LOG = LoggerFactory.getLogger(TestEvent.class);
+
+  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddhhmmZ");
 
   @Column
   @Type(type = "jsonb")
@@ -120,5 +127,23 @@ public class TestEvent extends BaseTestInfo {
 
   public PatientLink getPatientLink() {
     return order.getPatientLink();
+  }
+
+  public String getHl7v2Old() {
+    Random rand = new Random();
+    String fhs = 
+        "FHS|^~\\&|CDC PRIME - Atlanta, Georgia (Dekalb)^2.16.840.1.114222.4.1.237821^ISO|"
+        +"CDC PRIME - Atlanta, Georgia (Dekalb)^2.16.840.1.114222.4.1.237821^ISO|||"
+        +DATE_FORMAT.format(getDateTested());
+    String mhs = 
+        "MSH|^~\\&|CDC PRIME - Atlanta, Georgia (Dekalb)^2.16.840.1.114222.4.1.237821^ISO|"
+        +"CDC PRIME - Atlanta, Georgia (Dekalb)^2.16.840.1.114222.4.1.237821^ISO|||"
+        +DATE_FORMAT.format(getDateTested())
+        +"||ORU^R01^ORU_R01|"+String.valueOf(rand.nextInt(1000000))
+        +"|T|2.5.1|||NE|NE|USA||||PHLabReport-NoAck^ELR_Receiver^2.16.840.1.113883.9.11^ISO";
+    String sft =
+        "SFT|Centers for Disease Control and Prevention|0.1-SOGI_EQUITY_DEMO|PRIME SimpleReport|"
+        +"0.1-SOGI_EQUITY_DEMO||20210406";
+    return fhs + "\r" + mhs + "\r" + sft;
   }
 }

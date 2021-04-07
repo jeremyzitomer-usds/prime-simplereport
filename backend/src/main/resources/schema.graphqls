@@ -221,6 +221,7 @@ type TestResult {
   reasonForCorrection: String
   createdBy: ApiUser
   patientLink: PatientLink
+  hl7v2Old: String
 }
 type TestResultsSummary {
   facility: Facility

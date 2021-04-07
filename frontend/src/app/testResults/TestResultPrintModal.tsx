@@ -48,6 +48,7 @@ export const testQuery = gql`
         name
         loincCode
       }
+      hl7v2Old
     }
   }
 `;
@@ -268,6 +269,9 @@ export const DetachedTestResultPrintModal = ({
             )}
           </section>
         </main>
+        <header>
+          <h1>HL7 v2 Result</h1>
+        </header>
         <footer>
           <p>Test result printed {new Date().toLocaleString()}</p>
         </footer>
