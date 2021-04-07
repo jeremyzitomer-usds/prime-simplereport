@@ -11,6 +11,7 @@ import {
   SEXUAL_ORIENTATION,
   ROLE_VALUES,
 } from "../../constants";
+import Checkboxes from "../../commonComponents/Checkboxes"
 import RadioGroup from "../../commonComponents/RadioGroup";
 import RequiredMessage from "../../commonComponents/RequiredMessage";
 import { showError } from "../../utils";
@@ -22,6 +23,12 @@ import Input from "../../commonComponents/Input";
 import Select from "../../commonComponents/Select";
 
 import FacilitySelect from "./FacilitySelect";
+
+let patientGender: Array<string> = [];
+let patientSO: Array<string> = [];
+
+let GENDERLIST = GENDER;
+let SOLIST = SEXUAL_ORIENTATION;
 
 interface Props {
   patient: Nullable<PersonFormData>;
@@ -65,6 +72,67 @@ const PersonForm = (props: Props) => {
     },
     [patient, clearError]
   );
+
+  /**
+   * This function will set the checked boolean value for
+   * that gender identity <Checkbox>
+   */
+  const setGenderIdentity = (targetName: any, targetValue: any, targetChecked: any) => {
+    // IF patientGender contains 'notlisted' && value is not in the targetChecked
+    if (targetName === 'gender-freeresponse') {
+
+      let newGenderArr = [{ label: 'A gender identity not listed (please specify):', value: targetValue, checked: true }];
+
+      // Update GENDERLIST value on text update. Yes, this is bad.
+      GENDERLIST = GENDERLIST.map(obj => newGenderArr.find(o => o.label === obj.label) || obj);
+        setPatient({ ...patient, gender: targetValue });
+        setFormChanged(true);
+      return;
+    }
+    
+    // If newly checked gender is not on patient add it, otherwise, remove it.
+    // AND if the user is not trying to update the <input>
+    if (patientGender?.indexOf(targetValue) === -1 && targetName !== 'gender-freeresponse') {
+      // If newly checked gender, push onto patientGender
+      patientGender.push(targetValue);
+    } else {
+      patientGender.splice(patientGender.indexOf(targetValue), 1);
+    }
+
+    setFormChanged(true);
+    setPatient({ ...patient, gender: patientGender });
+  };
+
+  /**
+   * This function will set the checked boolean value for
+   * that sexual orientation <Checkbox>
+   */
+   const setSexualOrientation = (targetName: any, targetValue: any, targetChecked: any) => {
+    // IF patientSO contains 'notlisted' && value is not in the targetChecked
+    if (targetName === 'sexualOrientation-freeresponse') {
+
+      console.log('inside of setSexualOrientation - ', targetName, targetValue, targetChecked);
+      let newSOList = [{ label: 'A sexual orientation not listed (please specify):', value: targetValue, checked: true }];
+
+      // Update SOLIST value on text update. Yes, this is bad.
+      SOLIST = SOLIST.map(obj => newSOList.find(o => o.label === obj.label) || obj);
+        setPatient({ ...patient, sexualOrientation: targetValue });
+        setFormChanged(true);
+      return;
+    }
+    
+    // If newly checked gender is not on patient add it, otherwise, remove it.
+    // AND if the user is not trying to update the <input>
+    if (patientSO?.indexOf(targetValue) === -1 && targetName !== 'gender-freeresponse') {
+      // If newly checked gender, push onto patientSO
+      patientSO.push(targetValue);
+    } else {
+      patientSO.splice(patientSO.indexOf(targetValue), 1);
+    }
+
+    setFormChanged(true);
+    setPatient({ ...patient, sexualOrientation: patientSO });
+  };
 
   const onPersonChange = <K extends keyof PersonFormData>(field: K) => (
     value: PersonFormData[K]
@@ -120,6 +188,7 @@ const PersonForm = (props: Props) => {
   const commonInputProps = {
     formObject: patient,
     onChange: onPersonChange,
+    onClick: onPersonChange,
     validate: validateField,
     getValidationStatus: validationStatus,
     errors: errors,
@@ -267,27 +336,66 @@ const PersonForm = (props: Props) => {
           selectedRadio={patient.ethnicity}
           onChange={onPersonChange("ethnicity")}
         />
-        <RadioGroup
-          legend="Gender Identity"
+        <Checkboxes
+          legend="What is your gender identity? (Choose all that apply)."
           name="gender"
-          buttons={GENDER}
-          selectedRadio={patient.gender}
-          onChange={onPersonChange("gender")}
+          onChange={(e) =>
+            setGenderIdentity(
+              e.target.name,
+              e.target.value,
+              !e.target.checked,
+            )
+          }
+          boxes={GENDERLIST.map(({ label, value }) => ({
+            label,
+            value,
+            checked: (patient.gender?.indexOf(value) === -1) ? false : true,
+          }))}
         />
         <RadioGroup
-          legend="Biological Sex"
+          legend="What is your assigned gender at birth? (typically this is the gender marker which appears on your original birth certificate) (Choose One)."
           name="genderAssignedAtBirth"
           buttons={GENDER_ASSIGNED_AT_BIRTH}
           selectedRadio={patient.genderAssignedAtBirth}
           onChange={onPersonChange("genderAssignedAtBirth")}
         />
-        <RadioGroup
-          legend="Sexual Orientation"
+        <Checkboxes
+          legend="What is your sexual orientation? (Choose all that apply)."
           name="sexualOrientation"
-          buttons={SEXUAL_ORIENTATION}
-          selectedRadio={patient.sexualOrientation}
-          onChange={onPersonChange("sexualOrientation")}
+          onChange={(e) =>
+            setSexualOrientation(
+              e.target.name,
+              e.target.value,
+              !e.target.checked,
+            )
+          }
+          boxes={SOLIST.map(({ label, value }) => ({
+            label,
+            value,
+            checked: (patient.sexualOrientation?.indexOf(value) === -1) ? false : true,
+          }))}
         />
+        {/* <Checkboxes
+          legend="How would you describe your sexual orientation? (Choose all that apply)."
+          name="sexualOrientation"
+          onChange={(e) => {
+            if (e.target.checked) {
+              SEXUAL_ORIENTATION.find((o, i) => {
+                if (o.value === e.target.value) {
+                  sexualOrientationValues[i] = { label: o.label, value: o.value, checked: true };
+                  // toggleSexualOrientationCheckbox()
+                  return true; // stop searching
+                }
+                return false;
+              });
+            }
+          }}
+          boxes={sexualOrientationValues.map(({ label, value, checked }) => ({
+            label,
+            value,
+            checked,
+          }))}
+        /> */}
       </FormGroup>
       <FormGroup title="Other">
         <YesNoRadioGroup

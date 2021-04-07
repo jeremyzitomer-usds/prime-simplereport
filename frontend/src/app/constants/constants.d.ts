@@ -7,9 +7,9 @@ type Race =
   | "unknown"
   | "refused";
 type Ethnicity = "hispanic" | "not_hispanic";
-type Gender = "female" | "male" | "nonbinary" | "questioning" | "other" | "notdisclosed";
-type GenderAssignedAtBirth = "female" | "male" | "x" | "unsure" | "none" | "other" | "notdisclosed";
-type SexualOrientation = "heterosexual" | "homosexual" | "bipan" | "asexual" | "questioning" | "other" |"notdisclosed";
+type Gender = string[]; //["female" | "male" | "nonbinary" | "questioning" | "notlisted" | "notdisclosed"]
+type GenderAssignedAtBirth = "female" | "male" | "x" | "unsure" | "none" | "notlisted" | "notdisclosed";
+type SexualOrientation = string[]; //"heterosexual" | "homosexual" | "bipan" | "asexual" | "questioning" | "notlisted" |"notdisclosed";
 type YesNo = "YES" | "NO";
 type Role = "STAFF" | "RESIDENT" | "STUDENT" | "VISITOR" | "";
 

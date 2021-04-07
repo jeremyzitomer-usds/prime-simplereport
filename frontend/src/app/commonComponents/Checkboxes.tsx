@@ -5,6 +5,8 @@ import { UIDConsumer } from "react-uid";
 import Required from "../commonComponents/Required";
 import Optional from "../commonComponents/Optional";
 
+import TextInput from "./TextInput";
+
 // Checkbox objects need a value and label but also can have intrinsic `input`
 // DOM properties such as `disabled`, `readonly`, `aria-xxx` etc.
 export type CheckboxProps = {
@@ -24,6 +26,7 @@ interface Props {
   errorMessage?: string;
   validationStatus?: "error" | "success";
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClick?: any;
   required?: boolean;
   inputRef?: React.RefObject<HTMLInputElement>;
 }
@@ -35,6 +38,7 @@ const Checkboxes = (props: Props) => {
     legend,
     checkedValues = {},
     onChange,
+    onClick,
     legendSrOnly,
     validationStatus,
     errorMessage,
@@ -74,25 +78,91 @@ const Checkboxes = (props: Props) => {
             )}
           >
             {boxes.map(
-              ({ value, label, disabled, checked, ...inputProps }, i) => (
-                <div className="usa-checkbox" key={uid(i)}>
-                  <input
-                    className="usa-checkbox__input"
-                    checked={checked || checkedValues?.[value] || false}
-                    id={uid(i)}
-                    onChange={onChange}
-                    type="checkbox"
-                    value={value}
-                    name={name}
-                    ref={inputRef}
-                    disabled={disabled || props.disabled}
-                    {...inputProps}
-                  />
-                  <label className="usa-checkbox__label" htmlFor={uid(i)}>
-                    {label}
-                  </label>
-                </div>
-              )
+              function({ value, label, disabled, checked, ...inputProps }, i) {
+                // DISPLAY INPUT AREA FOR GENDER IDENTITY FREEFORM TEXT
+                if (label === 'A gender identity not listed (please specify):') {
+                  return (
+                    <div>
+                      <input
+                        className="usa-checkbox__input"
+                        checked={checked || checkedValues?.[value] || false}
+                        id={uid(i)}
+                        onChange={onChange}
+                        onClick={onClick}
+                        type="checkbox"
+                        value={value}
+                        name={name}
+                        ref={inputRef}
+                        disabled={disabled || props.disabled}
+                        {...inputProps}
+                      />
+                      <label className="usa-checkbox__label" htmlFor={uid(i)}>
+                        {label}
+                      </label>
+                      <TextInput
+                        name={name+`-freeresponse`}
+                        value={(value === 'notlisted') ? "Enter Text Here": value}
+                        onChange={onChange}
+                        type="text"
+                        required={required}
+                        disabled = { !checked }
+                      />
+                    </div>
+                  )
+                } 
+                // DISPLAY INPUT AREA FOR SEXUAL ORIENTATION FREEFORM TEXT
+                else if (label === 'A sexual orientation not listed (please specify):') {
+                  return (
+                    <div>
+                      <input
+                        className="usa-checkbox__input"
+                        checked={checked || checkedValues?.[value] || false}
+                        id={uid(i)}
+                        onChange={onChange}
+                        onClick={onClick}
+                        type="checkbox"
+                        value={value}
+                        name={name}
+                        ref={inputRef}
+                        disabled={disabled || props.disabled}
+                        {...inputProps}
+                      />
+                      <label className="usa-checkbox__label" htmlFor={uid(i)}>
+                        {label}
+                      </label>
+                      <TextInput
+                        name={name+`-freeresponse`}
+                        value={(value === 'notlisted') ? "Enter Text Here": value}
+                        onChange={onChange}
+                        type="text"
+                        required={required}
+                        disabled = { !checked }
+                      />
+                    </div>
+                  )
+                }
+                 else {
+                  return (
+                    <div className="usa-checkbox" key={uid(i)}>
+                      <input
+                        className="usa-checkbox__input"
+                        checked={checked || checkedValues?.[value] || false}
+                        id={uid(i)}
+                        onChange={onChange}
+                        type="checkbox"
+                        value={value}
+                        name={name}
+                        ref={inputRef}
+                        disabled={disabled || props.disabled}
+                        {...inputProps}
+                      />
+                      <label className="usa-checkbox__label" htmlFor={uid(i)}>
+                        {label}
+                      </label>
+                    </div>
+                  )
+                }
+              }
             )}
           </div>
         )}
