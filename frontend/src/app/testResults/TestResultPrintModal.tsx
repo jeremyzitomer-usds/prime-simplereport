@@ -48,7 +48,6 @@ export const testQuery = gql`
         name
         loincCode
       }
-      hl7v2Old
     }
   }
 `;
