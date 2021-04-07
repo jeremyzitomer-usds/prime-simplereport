@@ -80,14 +80,14 @@ export const GENDER_ASSIGNED_AT_BIRTH: { value: GenderAssignedAtBirth; label: st
   { label: "Prefer not to disclose", value: "notdisclosed" },
 ];
 
-export const SEXUAL_ORIENTATION: { value: SexualOrientation; label: string; checked?: boolean }[] = [
+export const SEXUAL_ORIENTATION: { value: string; label: string; checked?: boolean }[] = [
   { label: "Heterosexual (Straight, Not Lesbian or Gay)", value: "heterosexual" },
   { label: "Homosexual (Gay or Lesbian)", value: "homosexual" },
   { label: "Bisexual or Pansexual", value: "bipan" },
   { label: "Asexual or Asexual Spectrum", value: "asexual" },
   { label: "Questioning", value: "questioning" },
-  { label: "A sexual orientation not listed (please specify):", value: "notlisted" },
   { label: "Prefer not to disclose", value: "notdisclosed" },
+  { label: "A sexual orientation not listed (please specify):", value: "notlisted" },
 ]
 
 export const YES_NO_VALUES: { value: YesNo; label: string }[] = [

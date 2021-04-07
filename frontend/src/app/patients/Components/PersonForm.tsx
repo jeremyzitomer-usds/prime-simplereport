@@ -25,7 +25,10 @@ import Select from "../../commonComponents/Select";
 import FacilitySelect from "./FacilitySelect";
 
 let patientGender: Array<string> = [];
+let patientSO: Array<string> = [];
+
 let GENDERLIST = GENDER;
+let SOLIST = SEXUAL_ORIENTATION;
 
 interface Props {
   patient: Nullable<PersonFormData>;
@@ -77,14 +80,11 @@ const PersonForm = (props: Props) => {
   const setGenderIdentity = (targetName: any, targetValue: any, targetChecked: any) => {
     // IF patientGender contains 'notlisted' && value is not in the targetChecked
     if (targetName === 'gender-freeresponse') {
-      
+
       let newGenderArr = [{ label: 'A gender identity not listed (please specify):', value: targetValue, checked: true }];
-      
-      // Update GENDER value on text update. Yes, this is bad.
+
+      // Update GENDERLIST value on text update. Yes, this is bad.
       GENDERLIST = GENDERLIST.map(obj => newGenderArr.find(o => o.label === obj.label) || obj);
-      // GENDER.map(({ label, value }) => {
-        //   newGenderArr.find(o => o.label === label) || {label, value};
-        // });
         setPatient({ ...patient, gender: targetValue });
         setFormChanged(true);
       return;
@@ -101,6 +101,37 @@ const PersonForm = (props: Props) => {
 
     setFormChanged(true);
     setPatient({ ...patient, gender: patientGender });
+  };
+
+  /**
+   * This function will set the checked boolean value for
+   * that sexual orientation <Checkbox>
+   */
+   const setSexualOrientation = (targetName: any, targetValue: any, targetChecked: any) => {
+    // IF patientSO contains 'notlisted' && value is not in the targetChecked
+    if (targetName === 'sexualOrientation-freeresponse') {
+
+      console.log('inside of setSexualOrientation - ', targetName, targetValue, targetChecked);
+      let newSOList = [{ label: 'A sexual orientation not listed (please specify):', value: targetValue, checked: true }];
+
+      // Update SOLIST value on text update. Yes, this is bad.
+      SOLIST = SOLIST.map(obj => newSOList.find(o => o.label === obj.label) || obj);
+        setPatient({ ...patient, sexualOrientation: targetValue });
+        setFormChanged(true);
+      return;
+    }
+    
+    // If newly checked gender is not on patient add it, otherwise, remove it.
+    // AND if the user is not trying to update the <input>
+    if (patientSO?.indexOf(targetValue) === -1 && targetName !== 'gender-freeresponse') {
+      // If newly checked gender, push onto patientSO
+      patientSO.push(targetValue);
+    } else {
+      patientSO.splice(patientSO.indexOf(targetValue), 1);
+    }
+
+    setFormChanged(true);
+    setPatient({ ...patient, sexualOrientation: patientSO });
   };
 
   const onPersonChange = <K extends keyof PersonFormData>(field: K) => (
@@ -327,6 +358,22 @@ const PersonForm = (props: Props) => {
           buttons={GENDER_ASSIGNED_AT_BIRTH}
           selectedRadio={patient.genderAssignedAtBirth}
           onChange={onPersonChange("genderAssignedAtBirth")}
+        />
+        <Checkboxes
+          legend="What is your sexual orientation? (Choose all that apply)."
+          name="sexualOrientation"
+          onChange={(e) =>
+            setSexualOrientation(
+              e.target.name,
+              e.target.value,
+              !e.target.checked,
+            )
+          }
+          boxes={SOLIST.map(({ label, value }) => ({
+            label,
+            value,
+            checked: (patient.sexualOrientation?.indexOf(value) === -1) ? false : true,
+          }))}
         />
         {/* <Checkboxes
           legend="How would you describe your sexual orientation? (Choose all that apply)."

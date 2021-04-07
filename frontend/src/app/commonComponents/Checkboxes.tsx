@@ -79,7 +79,7 @@ const Checkboxes = (props: Props) => {
           >
             {boxes.map(
               function({ value, label, disabled, checked, ...inputProps }, i) {
-                // DISPLAY INPUT AREA FOR FREFORM TEXT
+                // DISPLAY INPUT AREA FOR GENDER IDENTITY FREEFORM TEXT
                 if (label === 'A gender identity not listed (please specify):') {
                   return (
                     <div>
@@ -109,7 +109,39 @@ const Checkboxes = (props: Props) => {
                       />
                     </div>
                   )
-                } else {
+                } 
+                // DISPLAY INPUT AREA FOR SEXUAL ORIENTATION FREEFORM TEXT
+                else if (label === 'A sexual orientation not listed (please specify):') {
+                  return (
+                    <div>
+                      <input
+                        className="usa-checkbox__input"
+                        checked={checked || checkedValues?.[value] || false}
+                        id={uid(i)}
+                        onChange={onChange}
+                        onClick={onClick}
+                        type="checkbox"
+                        value={value}
+                        name={name}
+                        ref={inputRef}
+                        disabled={disabled || props.disabled}
+                        {...inputProps}
+                      />
+                      <label className="usa-checkbox__label" htmlFor={uid(i)}>
+                        {label}
+                      </label>
+                      <TextInput
+                        name={name+`-freeresponse`}
+                        value={(value === 'notlisted') ? "Enter Text Here": value}
+                        onChange={onChange}
+                        type="text"
+                        required={required}
+                        disabled = { !checked }
+                      />
+                    </div>
+                  )
+                }
+                 else {
                   return (
                     <div className="usa-checkbox" key={uid(i)}>
                       <input

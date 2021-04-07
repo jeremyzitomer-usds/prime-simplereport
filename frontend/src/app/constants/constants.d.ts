@@ -9,7 +9,7 @@ type Race =
 type Ethnicity = "hispanic" | "not_hispanic";
 type Gender = string[]; //["female" | "male" | "nonbinary" | "questioning" | "notlisted" | "notdisclosed"]
 type GenderAssignedAtBirth = "female" | "male" | "x" | "unsure" | "none" | "notlisted" | "notdisclosed";
-type SexualOrientation = "heterosexual" | "homosexual" | "bipan" | "asexual" | "questioning" | "notlisted" |"notdisclosed";
+type SexualOrientation = string[]; //"heterosexual" | "homosexual" | "bipan" | "asexual" | "questioning" | "notlisted" |"notdisclosed";
 type YesNo = "YES" | "NO";
 type Role = "STAFF" | "RESIDENT" | "STUDENT" | "VISITOR" | "";
 
