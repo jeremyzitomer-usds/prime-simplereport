@@ -25,6 +25,7 @@ import Select from "../../commonComponents/Select";
 import FacilitySelect from "./FacilitySelect";
 
 let patientGender: Array<string> = [];
+let GENDERLIST = GENDER;
 
 interface Props {
   patient: Nullable<PersonFormData>;
@@ -73,13 +74,19 @@ const PersonForm = (props: Props) => {
    * This function will set the checked boolean value for
    * that gender identity <Checkbox>
    */
-  const setGenderIdentity = (current: any, targetName: any, targetValue: any, targetChecked: any) => {
-    // console.log('top setGenderIdentity - patient.gender', patient.gender); // should be null since it's not initiated on a new patient
-    console.log('in setGenderIdentity - current, targetName, targetValue, targetChecked, patient - ', current, targetName, targetValue, targetChecked, patient);
-
+  const setGenderIdentity = (targetName: any, targetValue: any, targetChecked: any) => {
     // IF patientGender contains 'notlisted' && value is not in the targetChecked
     if (targetName === 'gender-freeresponse') {
-      console.log('FREEFORM TEXT ENTRY - ', targetName, targetValue);
+      
+      let newGenderArr = [{ label: 'A gender identity not listed (please specify):', value: targetValue, checked: true }];
+      
+      // Update GENDER value on text update. Yes, this is bad.
+      GENDERLIST = GENDERLIST.map(obj => newGenderArr.find(o => o.label === obj.label) || obj);
+      // GENDER.map(({ label, value }) => {
+        //   newGenderArr.find(o => o.label === label) || {label, value};
+        // });
+        setPatient({ ...patient, gender: targetValue });
+        setFormChanged(true);
       return;
     }
     
@@ -88,22 +95,17 @@ const PersonForm = (props: Props) => {
     if (patientGender?.indexOf(targetValue) === -1 && targetName !== 'gender-freeresponse') {
       // If newly checked gender, push onto patientGender
       patientGender.push(targetValue);
-      console.log('INSIDE OF IF - ', patientGender);
     } else {
       patientGender.splice(patientGender.indexOf(targetValue), 1);
-      console.log('INSIDE OF ELSE - ', patientGender);
     }
 
     setFormChanged(true);
     setPatient({ ...patient, gender: patientGender });
-
-    console.log('bottom setGenderIdentity - patientGender', patientGender); // should be null since it's not initiated on a new patient
   };
 
   const onPersonChange = <K extends keyof PersonFormData>(field: K) => (
     value: PersonFormData[K]
   ) => {
-    console.log('inside onPersonChange - patient, field, value - ', patient, field, value);
     setFormChanged(true);
     setPatient({ ...patient, [field]: value });
   };
@@ -306,18 +308,14 @@ const PersonForm = (props: Props) => {
         <Checkboxes
           legend="What is your gender identity? (Choose all that apply)."
           name="gender"
-          // onInput={onPersonChange("role")} // trying to get the form to repaint w/ updated values
-          onClick={onPersonChange("race")}
-          onChange={function(e){
-            onPersonChange("race");
+          onChange={(e) =>
             setGenderIdentity(
-              patient.gender,
               e.target.name,
               e.target.value,
               !e.target.checked,
             )
-          }}
-          boxes={GENDER.map(({ label, value }) => ({
+          }
+          boxes={GENDERLIST.map(({ label, value }) => ({
             label,
             value,
             checked: (patient.gender?.indexOf(value) === -1) ? false : true,

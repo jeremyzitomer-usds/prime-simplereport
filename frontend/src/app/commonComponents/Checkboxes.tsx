@@ -78,10 +78,9 @@ const Checkboxes = (props: Props) => {
             )}
           >
             {boxes.map(
-              
               function({ value, label, disabled, checked, ...inputProps }, i) {
                 // DISPLAY INPUT AREA FOR FREFORM TEXT
-                if (value === 'notlisted') {
+                if (label === 'A gender identity not listed (please specify):') {
                   return (
                     <div>
                       <input
@@ -101,12 +100,9 @@ const Checkboxes = (props: Props) => {
                         {label}
                       </label>
                       <TextInput
-                        // label={label}
                         name={name+`-freeresponse`}
-                        // value={value}
+                        value={(value === 'notlisted') ? "Enter Text Here": value}
                         onChange={onChange}
-                        // validationStatus={getValidationStatus(field)}
-                        // errorMessage={errors[field]}
                         type="text"
                         required={required}
                         disabled = { !checked }
@@ -134,10 +130,7 @@ const Checkboxes = (props: Props) => {
                     </div>
                   )
                 }
-              } 
-
-
-              
+              }
             )}
           </div>
         )}
