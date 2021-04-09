@@ -81,11 +81,12 @@ const Checkboxes = (props: Props) => {
               function({ value, label, disabled, checked, ...inputProps }, i) {
                 // DISPLAY INPUT AREA FOR GENDER IDENTITY FREEFORM TEXT
                 if (label === 'A gender identity not listed (please specify):') {
+                  // console.log('INSIDE CHECKBOXES - ', value);
                   return (
                     <div>
                       <input
                         className="usa-checkbox__input"
-                        checked={checked || checkedValues?.[value] || false}
+                        checked={checked || checkedValues?.[value] ||false}
                         id={uid(i)}
                         onChange={onChange}
                         onClick={onClick}
@@ -101,8 +102,9 @@ const Checkboxes = (props: Props) => {
                       </label>
                       <TextInput
                         name={name+`-freeresponse`}
-                        value={(value === 'notlisted') ? "Enter Text Here": value}
+                        value={(value.includes('notlisted')) ? value.substr(9) : ""}
                         onChange={onChange}
+                        placeholder="Enter Text Here"
                         type="text"
                         required={required}
                         disabled = { !checked }
@@ -116,7 +118,7 @@ const Checkboxes = (props: Props) => {
                     <div>
                       <input
                         className="usa-checkbox__input"
-                        checked={checked || checkedValues?.[value] || false}
+                        checked={checked || checkedValues?.[value] ||false}
                         id={uid(i)}
                         onChange={onChange}
                         onClick={onClick}
@@ -132,8 +134,9 @@ const Checkboxes = (props: Props) => {
                       </label>
                       <TextInput
                         name={name+`-freeresponse`}
-                        value={(value === 'notlisted') ? "Enter Text Here": value}
+                        value={(value.includes('notlisted')) ? value.substr(9) : ""}
                         onChange={onChange}
+                        placeholder="Enter Text Here"
                         type="text"
                         required={required}
                         disabled = { !checked }

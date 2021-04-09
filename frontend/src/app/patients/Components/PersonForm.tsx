@@ -24,8 +24,8 @@ import Select from "../../commonComponents/Select";
 
 import FacilitySelect from "./FacilitySelect";
 
-let patientGender: Array<string> = [];
-let patientSO: Array<string> = [];
+let patientGender: any;
+let patientSO: any;
 
 let GENDERLIST = GENDER;
 let SOLIST = SEXUAL_ORIENTATION;
@@ -75,56 +75,123 @@ const PersonForm = (props: Props) => {
 
   /**
    * This function will set the checked boolean value for
-   * that gender identity <Checkbox>
+   * that Gender Identity <Checkbox> and allow for freeform text
    */
   const setGenderIdentity = (targetName: any, targetValue: any, targetChecked: any) => {
-    // IF patientGender contains 'notlisted' && value is not in the targetChecked
-    if (targetName === 'gender-freeresponse') {
+    patientGender = patient.gender;
+    
+    // Add targetValue to the patient.gender
+    if (targetName !== 'gender-freeresponse') {
+      // If trying to remove the `notlisted` checkbox, we need to find it and remove it accordingly
+      if (targetValue === 'notlisted' && targetChecked === false) {
+        // remove all occurrences on `notlisted` on the patientGender copy
+        patientGender = patientGender.filter((v: string | string[]) => v.includes('notlisted') === false );
+      } else {
+        // Add/remove logic for gender identity selection
+        (targetChecked) ? patientGender.push(targetValue) : patientGender.splice(patientGender.indexOf(targetValue), 1);
+      }
 
-      let newGenderArr = [{ label: 'A gender identity not listed (please specify):', value: targetValue, checked: true }];
+      // Update patient with newly added/removed selection + form change
+      setPatient({ ...patient, gender: patientGender });
+      setFormChanged(true);
+      return;
+    } else if ((targetName === 'gender-freeresponse' && (patient.gender?.indexOf('notlisted') !== -1)) || patientGender.map((g:any) => (g.includes('notlisted')))) {
+      // Trying to add the freefrom text onto the `notlisted` array value.
+      // the checkboxes component will splice off the beginning of the "string" with the new addition
+      // Iterate over each patientGender to find the one that contains `notlisted` then add/remove input value
+      // Apologies if you're here - this is unideal...
 
-      // Update GENDERLIST value on text update. Yes, this is bad.
-      GENDERLIST = GENDERLIST.map(obj => newGenderArr.find(o => o.label === obj.label) || obj);
-        setPatient({ ...patient, gender: targetValue });
-        setFormChanged(true);
+      patientGender.map((g: any, notListedLoc: any) => {
+        if (g.includes('notlisted')) {
+          let newGenderArr: any[] = [];
+
+          patientGender[notListedLoc] = `notlisted`+targetValue;
+          newGenderArr = [{ label: 'A gender identity not listed (please specify):', value: `notlisted`+targetValue, checked: true }];
+
+          // Update GENDERLIST value on text update...
+          GENDERLIST = GENDERLIST.map(obj => newGenderArr.find(o => o.label === obj.label) || obj);
+          setPatient({ ...patient, gender: patientGender });
+          setFormChanged(true);
+          return
+        } else {
+          // do nothing
+        }
+      });
+
+      // console.log('targetName, targetValue, targetChecked - ', targetName, targetValue, targetChecked, patient);
+      return;
+    } else {
+      // Most unideal error handling, but atleast there is something.
+      console.log("THERE'S BEEN AN ERROR");
       return;
     }
-    
-    // If newly checked gender is not on patient add it, otherwise, remove it.
-    // AND if the user is not trying to update the <input>
-    if (patientGender?.indexOf(targetValue) === -1 && targetName !== 'gender-freeresponse') {
-      // If newly checked gender, push onto patientGender
-      patientGender.push(targetValue);
-    } else {
-      patientGender.splice(patientGender.indexOf(targetValue), 1);
-    }
-
-    setFormChanged(true);
-    setPatient({ ...patient, gender: patientGender });
   };
 
   /**
    * This function will set the checked boolean value for
    * that sexual orientation <Checkbox>
    */
-   const setSexualOrientation = (targetName: any, targetValue: any, targetChecked: any) => {
+  const setSexualOrientation = (targetName: any, targetValue: any, targetChecked: any) => {
+    // Update SOLIST so the CheckBoxes update
+    // Set the opposite of targetChecked on patient.sexualOrientation w/ setPatient()
+    // setFormChanged(true);
+
+    // IF the targetValue = "notlisted" then add it to the patient.sexualorientation + the freeform text entry.
+    console.log('patient.sexualOrientation; - ', patient.sexualOrientation);
+    patientSO = patient.sexualOrientation;
+
+    // If 'not listed' is checked, set it on patient.sexualOrientation & update form
+    if (targetValue === 'notlisted' && targetChecked === true) {
+      patientSO.push(targetValue);
+      setPatient({ ...patient, sexualOrientation: patientSO });
+      setFormChanged(true);
+      console.log('here');
+      return;
+    }
+
+    // If updating the freeform response, update proper lists and values
+    if (targetName === 'sexualOrientation-freeresponse') {
+      console.log('patientSO.indexOf("notlisted") - ', patientSO.indexOf("notlisted"));
+      // console.log('targetName, targetValue, targetChecked - ', targetName, targetValue, targetChecked);
+      patientSO[patientSO.indexOf("notlisted")] += targetValue;
+      console.log('trying to update text - ', SOLIST, patientSO);
+      return
+    }
+
+    
+    let newSOList: any[];
+
     // IF patientSO contains 'notlisted' && value is not in the targetChecked
     if (targetName === 'sexualOrientation-freeresponse') {
+      console.log('patientSO.indexOF(notlisted) - ', patientSO.indexOf("notlisted"));
 
-      console.log('inside of setSexualOrientation - ', targetName, targetValue, targetChecked);
-      let newSOList = [{ label: 'A sexual orientation not listed (please specify):', value: targetValue, checked: true }];
-
+      newSOList = [{ label: 'A sexual orientation not listed (please specify):', value: targetValue, checked: true }];
+      // console.log('before inside of setSexualOrientation - patientSO - ', patientSO);
+      
       // Update SOLIST value on text update. Yes, this is bad.
+      // console.log('SOLIST + newSOList - ', SOLIST, newSOList);
+      // patientSO[patientSO.indexOf("notlisted")] = targetValue;
+
+      //remove original 'notlisted' value and replace with new textinput value
+      if (patientSO.indexOf("notlisted") !== -1) {
+        console.log('inside if');
+        // patientSO[patientSO.indexOf("notlisted")] = targetValue;
+      }
+      
+      console.log('after inside of setSexualOrientation - patientSO - ', patientSO);
+
+
       SOLIST = SOLIST.map(obj => newSOList.find(o => o.label === obj.label) || obj);
-        setPatient({ ...patient, sexualOrientation: targetValue });
-        setFormChanged(true);
+      setPatient({ ...patient, sexualOrientation: patientSO });
+      setFormChanged(true);
+      console.log('right after SOLIST Update - ', SOLIST);
       return;
     }
     
     // If newly checked gender is not on patient add it, otherwise, remove it.
     // AND if the user is not trying to update the <input>
     if (patientSO?.indexOf(targetValue) === -1 && targetName !== 'gender-freeresponse') {
-      // If newly checked gender, push onto patientSO
+      // If newly checked gender, push onto patientSO & update the newSOList
       patientSO.push(targetValue);
     } else {
       patientSO.splice(patientSO.indexOf(targetValue), 1);
@@ -343,13 +410,13 @@ const PersonForm = (props: Props) => {
             setGenderIdentity(
               e.target.name,
               e.target.value,
-              !e.target.checked,
+              e.target.checked,
             )
           }
           boxes={GENDERLIST.map(({ label, value }) => ({
             label,
             value,
-            checked: (patient.gender?.indexOf(value) === -1) ? false : true,
+            checked: ((patient.gender?.indexOf(value) === -1) && (patient.gender?.map((g:any) => (g.includes('notlisted')))))? false : true,
           }))}
         />
         <RadioGroup
@@ -366,7 +433,7 @@ const PersonForm = (props: Props) => {
             setSexualOrientation(
               e.target.name,
               e.target.value,
-              !e.target.checked,
+              e.target.checked,
             )
           }
           boxes={SOLIST.map(({ label, value }) => ({
