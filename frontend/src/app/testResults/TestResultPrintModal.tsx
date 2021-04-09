@@ -76,6 +76,7 @@ export const DetachedTestResultPrintModal = ({
     deviceType,
     testPerformed,
     correctionStatus,
+    hl7v2Old
   } = data.testResult;
 
   return (
@@ -271,6 +272,7 @@ export const DetachedTestResultPrintModal = ({
         </main>
         <header>
           <h1>HL7 v2 Result</h1>
+          <p>{hl7v2Old}</p>
         </header>
         <footer>
           <p>Test result printed {new Date().toLocaleString()}</p>

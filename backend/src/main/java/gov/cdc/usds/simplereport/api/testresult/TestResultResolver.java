@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,30 +45,13 @@ public class TestResultResolver implements GraphQLQueryResolver, GraphQLMutation
     return tos.getTestResult(id);
   }
 
-  public ApiTestResultsSummary getTestResultsSummary(
+  public List<ApiTestResultsSummary> getTestResultsSummary(
       UUID facilityId,
-      LocalDate bornOnOrAfter,
-      LocalDate bornOnOrBefore,
-      String role,
-      String race,
-      String ethnicity,
-      List<String> gender,
-      String genderAssignedAtBirth,
-      List<String> sexualOrientation,
-      Boolean residentCongregateSetting,
-      Boolean employedInHealthcare,
+      List<Demographic> demographics,
       LocalDate since) {
-    Demographic demographic = new Demographic(
-        Optional.ofNullable(bornOnOrAfter),
-        Optional.ofNullable(bornOnOrBefore),
-        Optional.ofNullable(role).map(Translators::parsePersonRole),
-        Optional.ofNullable(race).map(Translators::parseRace),
-        Optional.ofNullable(ethnicity).map(Translators::parseEthnicity),
-        Optional.ofNullable(gender),
-        Optional.ofNullable(genderAssignedAtBirth).map(Translators::parseGenderAssignedAtBirth),
-        Optional.ofNullable(sexualOrientation),
-        Optional.ofNullable(residentCongregateSetting),
-        Optional.ofNullable(employedInHealthcare));
-    return new ApiTestResultsSummary(tos.getTestResultsSummary(facilityId, demographic, Optional.ofNullable(since)));
+    return demographics.stream()
+        .map(d -> 
+            new ApiTestResultsSummary(tos.getTestResultsSummary(facilityId, d, Optional.ofNullable(since))))
+        .collect(Collectors.toList());
   }
 }

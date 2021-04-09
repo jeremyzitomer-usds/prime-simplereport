@@ -135,6 +135,19 @@ type Demographic {
   description: String
 }
 
+input DemographicInput {
+  bornOnOrAfter: LocalDate
+  bornOnOrBefore: LocalDate
+  role: String
+  race: String
+  ethnicity: String
+  gender: [String!]
+  genderAssignedAtBirth: String
+  sexualOrientation: [String!]
+  residentCongregateSetting: Boolean
+  employedInHealthcare: Boolean
+}
+
 type DemographicValues {
   roles: [String!]!
   races: [String!]!
@@ -295,18 +308,9 @@ type Query {
   testResult(id: ID!): TestResult @requiredPermissions(allOf: ["READ_RESULT_LIST"])
   testResultsSummary(
     facilityId: ID!
-    bornOnOrAfter: LocalDate
-    bornOnOrBefore: LocalDate
-    role: String
-    race: String
-    ethnicity: String
-    gender: [String!]
-    genderAssignedAtBirth: String
-    sexualOrientation: [String!]
-    residentCongregateSetting: Boolean
-    employedInHealthcare: Boolean
+    demographics: [DemographicInput!]!
     since: LocalDate
-  ): TestResultsSummary @requiredPermissions(allOf: ["READ_RESULT_LIST"])
+  ): [TestResultsSummary] @requiredPermissions(allOf: ["READ_RESULT_LIST"])
   users: [User] @requiredPermissions(allOf: ["MANAGE_USERS"])
   whoami: User!
 }

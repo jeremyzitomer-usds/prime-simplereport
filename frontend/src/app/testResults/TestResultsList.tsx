@@ -16,6 +16,7 @@ import Pagination from "../commonComponents/Pagination";
 
 import TestResultPrintModal from "./TestResultPrintModal";
 import TestResultCorrectionModal from "./TestResultCorrectionModal";
+import {HorizontalBarSeries, HorizontalGridLines, VerticalGridLines, XAxis, XYPlot, YAxis} from "react-vis";
 
 import "./TestResultsList.scss";
 
@@ -59,6 +60,67 @@ export const testResultQuery = gql`
   }
 `;
 
+export const testResultsSummaryQuery = gql`
+  query GetDemographicResults($facilityId: ID!) {
+    testResultsSummary(
+      facilityId: $facilityId
+      demographics: [
+        {
+        sexualOrientation: ["homosexual"]
+        },
+        {
+        race: "black"
+        sexualOrientation: ["homosexual"]
+        },
+        {
+        race: "native"
+        sexualOrientation: ["homosexual"]
+        },
+        {
+        race: "white"
+        sexualOrientation: ["queer"]
+        },
+        {
+        race: "black"
+        sexualOrientation: ["queer"]
+        },
+        {
+        race: "native"
+        sexualOrientation: ["queer"]
+        },
+        {
+        gender: "female",
+        genderAssignedAtBirth: "male"
+        },      
+        {
+        gender: "female",
+        genderAssignedAtBirth: "female"
+        }
+        {
+        gender: ["nonbinary","female"],
+        genderAssignedAtBirth: "female"
+        },
+        {
+        bornOnOrBefore: "1990-01-01"
+        sexualOrientation: ["homosexual"]
+        },
+        {
+        bornOnOrAfter: "1990-01-01"
+        sexualOrientation: ["homosexual"]
+        },
+      ]
+      since: "2021-03-26"
+    ) {
+      demographic {
+        description
+      }
+      totalTests
+      percentPositive
+      since
+    }
+  }
+`;
+
 interface Props {
   data: any;
   trackAction: () => void;
@@ -66,6 +128,8 @@ interface Props {
   page: number;
   entriesPerPage: number;
   totalEntries: number;
+  barSeries: any;
+  testResultsSummary: any;
 }
 
 export const DetachedTestResultsList: any = ({
@@ -74,6 +138,8 @@ export const DetachedTestResultsList: any = ({
   page,
   entriesPerPage,
   totalEntries,
+  barSeries,
+  testResultsSummary
 }: Props) => {
   const [printModalId, setPrintModalId] = useState(undefined);
   const [markErrorId, setMarkErrorId] = useState(undefined);
@@ -97,6 +163,10 @@ export const DetachedTestResultsList: any = ({
       />
     );
   }
+
+  const testResultsSummaryData = 
+    testResultsSummary.testResultsSummary.map((t: any) => ({y: (t.demographic.description), x: t.percentPositive, color: t.percentPositive/50}));
+  console.log(testResultsSummaryData);
 
   const testResults = data?.testResults || [];
 
@@ -182,6 +252,26 @@ export const DetachedTestResultsList: any = ({
               </h2>
             </div>
             <div className="usa-card__body">
+              <div className="center-text"></div>
+              <div className="responsive-bar-chart">
+              <h3>Positivity Rates by Demographic, Last Two Weeks</h3>
+                <XYPlot margin={{left: 250, top: 0}} 
+                        yType="ordinal" 
+                        width={900} 
+                        height={400} 
+                        xDomain={[0, 100]} 
+                        colorDomain={[0, 1, 2]}
+                        colorRange={["blue", "purple", "red"]}>
+                  <VerticalGridLines />
+                  <XAxis  />
+                  <YAxis />
+                  <HorizontalBarSeries
+                    data={testResultsSummaryData} barWidth={0.1}
+                  />
+                </XYPlot>
+              </div>
+            </div>
+            <div className="usa-card__body">
               <table className="usa-table usa-table--borderless width-full">
                 <thead>
                   <tr>
@@ -220,7 +310,7 @@ export const resultsCountQuery = gql`
 const TestResultsList = (
   props: Omit<
     Props,
-    InjectedQueryWrapperProps | "pageCount" | "entriesPerPage" | "totalEntries"
+    InjectedQueryWrapperProps | "pageCount" | "entriesPerPage" | "totalEntries" | "barSeries" | "testResultsSummary"
   >
 ) => {
   const activeFacilityId = useSelector(
@@ -229,30 +319,69 @@ const TestResultsList = (
 
   const {
     data: totalResults,
-    loading,
-    error,
+    loading: l1,
+    error: e1,
     refetch: refetchCount,
   } = useQuery(resultsCountQuery, {
     variables: { facilityId: activeFacilityId },
     fetchPolicy: "no-cache",
   });
 
+  const {
+    data: testResultsSummary,
+    loading: l2,
+    error: e2,
+  } = useQuery(testResultsSummaryQuery, {
+    variables: { facilityId: activeFacilityId },
+    fetchPolicy: "no-cache",
+  });
+
+  console.log(testResultsSummary);
   if (activeFacilityId.length < 1) {
     return <div>"No facility selected"</div>;
   }
 
-  if (loading) {
+  if (l1) {
     return <p>Loading</p>;
   }
-  if (error) {
-    throw error;
+  if (e1) {
+    throw e1;
+  }
+
+  if (l2) {
+    return <p>Loading</p>;
+  }
+  if (e2) {
+    throw e2;
   }
 
   const totalEntries = totalResults.testResultsCount;
   const entriesPerPage = 20;
   const pageNumber = props.page || 1;
+  
+  const barSeries = [{ y: "what", x: 59 }, { y: "how", x: 74 }];
 
   return (
+    <div>
+    {/* <QueryWrapper<Props>
+      query={testResultQuery}
+      queryOptions={{
+        variables: {
+          facilityId: activeFacilityId,
+          pageNumber: pageNumber - 1,
+          pageSize: entriesPerPage,
+        },
+      }}
+      onRefetch={refetchCount}
+      Component={DetachedTestResultsList}
+      componentProps={{
+        ...props,
+        page: pageNumber,
+        totalEntries,
+        entriesPerPage,
+        barSeries
+      }}
+    /> */}
     <QueryWrapper<Props>
       query={testResultQuery}
       queryOptions={{
@@ -269,8 +398,11 @@ const TestResultsList = (
         page: pageNumber,
         totalEntries,
         entriesPerPage,
+        barSeries,
+        testResultsSummary
       }}
     />
+    </div>
   );
 };
 

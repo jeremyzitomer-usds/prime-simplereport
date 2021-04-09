@@ -1,4 +1,5 @@
 @import "../../scss/app-settings.scss";
+@import "~react-vis/dist/style";
 
 .sr-test-results-list {
   .sr-more-test-results {
@@ -28,4 +29,8 @@
   font-size: 50%;
   vertical-align: middle;
   font-weight: normal;
+}
+
+.center-text {
+  text-align: center;
 }
