@@ -4,6 +4,7 @@ import { UIDConsumer } from "react-uid";
 
 import Required from "./Required";
 import Optional from "./Optional";
+import TextInput from "./TextInput";
 
 type Options<T> = {
   label: React.ReactNode;
@@ -85,26 +86,59 @@ const RadioGroup = <T extends string>({
                 "usa-radio__label",
                 (c.disabled || disabled) && "text-base"
               );
-              return (
-                <div className={groupClass} key={uid(c.value)}>
-                  <input
-                    type="radio"
-                    id={uid(c.value)}
-                    name={name}
-                    value={c.value}
-                    data-required={required || "false"}
-                    disabled={disabled || c.disabled || false}
-                    className={inputClass}
-                    checked={c.value === selectedRadio}
-                    onClick={onClick ? () => onClick(c.value) : undefined}
-                    onChange={() => onChange(c.value)}
-                    onBlur={onBlur}
-                  />
-                  <label className={labelClasses} htmlFor={uid(c.value)}>
-                    {c.label}
-                  </label>
-                </div>
-              );
+              // CONDITIONAL FOR THE `notlisted` radio button
+              if (c.label === 'A gender assigned at birth not listed (please specify):') {
+                return (
+                  <div className={groupClass} key={uid(c.value)}>
+                    <input
+                      type="radio"
+                      id={uid(c.value)}
+                      name={name}
+                      value={c.value}
+                      data-required={required || "false"}
+                      disabled={disabled || c.disabled || false}
+                      className={inputClass}
+                      checked={c.value === selectedRadio}
+                      onClick={onClick ? () => onClick(c.value) : undefined}
+                      onChange={() => onChange(c.value)}
+                      onBlur={onBlur}
+                    />
+                    <label className={labelClasses} htmlFor={uid(c.value)}>
+                      {c.label}
+                      <TextInput
+                        name={name+`-freeresponse`}
+                        value={(c.value.includes('notlisted')) ? c.value.substr(9) : ""}
+                        onChange={() => onChange(c.value)}
+                        placeholder="Enter Text Here"
+                        type="text"
+                        required={required}
+                        disabled={true}
+                      />
+                    </label>
+                  </div>
+                )
+              } else {
+                return (
+                  <div className={groupClass} key={uid(c.value)}>
+                    <input
+                      type="radio"
+                      id={uid(c.value)}
+                      name={name}
+                      value={c.value}
+                      data-required={required || "false"}
+                      disabled={disabled || c.disabled || false}
+                      className={inputClass}
+                      checked={c.value === selectedRadio}
+                      onClick={onClick ? () => onClick(c.value) : undefined}
+                      onChange={() => onChange(c.value)}
+                      onBlur={onBlur}
+                    />
+                    <label className={labelClasses} htmlFor={uid(c.value)}>
+                      {c.label}
+                    </label>
+                  </div>
+                );
+              }
             })}
           </div>
         )}
