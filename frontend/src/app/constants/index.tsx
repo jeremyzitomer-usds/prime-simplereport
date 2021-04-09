@@ -67,7 +67,6 @@ export const GENDER: { value: string; label: string; checked?: boolean }[] = [
   { label: "Nonbinary", value: "nonbinary" },
   { label: "Questioning", value: "questioning" },
   { label: "Prefer not to disclose", value: "not_disclosed" },
-  { label: "MISC", value: "misc" },
   { label: "A gender identity not listed (please specify):", value: "notlisted" },
 ]
 

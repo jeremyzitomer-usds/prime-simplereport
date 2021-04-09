@@ -5,9 +5,9 @@ import {
   RACE_VALUES,
   ROLE_VALUES,
   ETHNICITY_VALUES,
-  GENDER,
+  // GENDER,
   GENDER_ASSIGNED_AT_BIRTH,
-  SEXUAL_ORIENTATION,
+  // SEXUAL_ORIENTATION,
 } from "../constants";
 import { Option } from "../commonComponents/Dropdown";
 
