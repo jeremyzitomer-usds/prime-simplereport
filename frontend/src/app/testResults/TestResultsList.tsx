@@ -66,7 +66,16 @@ export const testResultsSummaryQuery = gql`
       facilityId: $facilityId
       demographics: [
         {
+        sexualOrientation: ["heterosexual"]
+        },
+        {
         sexualOrientation: ["homosexual"]
+        },
+        {
+        sexualOrientation: ["asexual"]
+        },
+        {
+        sexualOrientation: ["questioning"]
         },
         {
         race: "black"
@@ -78,28 +87,46 @@ export const testResultsSummaryQuery = gql`
         },
         {
         race: "white"
-        sexualOrientation: ["queer"]
+        sexualOrientation: ["homosexual"]
         },
         {
-        race: "black"
-        sexualOrientation: ["queer"]
+        race: "asian"
+        sexualOrientation: ["homosexual"]
         },
         {
-        race: "native"
-        sexualOrientation: ["queer"]
+        gender: "woman"
         },
         {
-        gender: "female",
+        gender: "man"
+        },
+        {
+        gender: "nonbinary"
+        },
+        {
+        gender: ["nonbinary", "woman"]
+        },
+        {
+        gender: "woman",
         genderAssignedAtBirth: "male"
         },      
         {
-        gender: "female",
-        genderAssignedAtBirth: "female"
-        }
-        {
-        gender: ["nonbinary","female"],
+        gender: "woman",
         genderAssignedAtBirth: "female"
         },
+        {
+        gender: "woman",
+        genderAssignedAtBirth: "x"
+        },
+        {
+        race: "white"
+        gender: "woman",
+        genderAssignedAtBirth: "male"
+        },      
+        {
+        race: "black"
+        gender: "woman",
+        genderAssignedAtBirth: "male"
+        },      
         {
         bornOnOrBefore: "1990-01-01"
         sexualOrientation: ["homosexual"]
@@ -107,6 +134,12 @@ export const testResultsSummaryQuery = gql`
         {
         bornOnOrAfter: "1990-01-01"
         sexualOrientation: ["homosexual"]
+        },
+        {
+        residentCongregateSetting: true
+        },
+        {
+        residentCongregateSetting: false
         },
       ]
       since: "2021-03-26"
@@ -259,14 +292,14 @@ export const DetachedTestResultsList: any = ({
                         yType="ordinal" 
                         width={900} 
                         height={400} 
-                        xDomain={[0, 100]} 
+                        xDomain={[-1, 100]} 
                         colorDomain={[0, 1, 2]}
-                        colorRange={["blue", "purple", "red"]}>
+                        colorRange={["cyan", "indigo", "red"]}>
                   <VerticalGridLines />
                   <XAxis  />
                   <YAxis />
                   <HorizontalBarSeries
-                    data={testResultsSummaryData} barWidth={0.1}
+                    data={testResultsSummaryData.reverse()} barWidth={0.15}
                   />
                 </XYPlot>
               </div>

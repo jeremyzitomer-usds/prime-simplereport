@@ -235,6 +235,7 @@ type TestResult {
   createdBy: ApiUser
   patientLink: PatientLink
   hl7v2Old: String
+  hl7v2New: String
 }
 type TestResultsSummary {
   facility: Facility

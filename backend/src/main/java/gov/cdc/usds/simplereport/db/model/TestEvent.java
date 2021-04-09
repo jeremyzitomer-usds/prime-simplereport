@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -64,6 +66,71 @@ public class TestEvent extends BaseTestInfo {
           "hispanic", "Hispanic or Latino",
           "not_hispanic", "Not Hispanic or Latino",
           "unknown", "Unknown");
+
+  private static final Map<String, String> GAAB_OLD_MAP =
+      Map.of(
+        "female", "F",
+        "male", "M",
+        "x", "O",
+        "unsure", "U",
+        "not_assigned", "A",
+        "not_disclosed", "U");
+
+  private static final Map<String, String> GENDER_NEW_SNOMED_CODE_MAP =
+      Map.of(
+        "man", "446151000124109",
+        "woman", "446141000124107",
+        "nonbinary", "446131000124102",
+        "questioning", "<NEW-SNOMED-CODE-FOR-QUESTIONING:2342339292>",
+        "not_disclosed", "ASKU"
+      );
+
+  private static final Map<String, String> GENDER_NEW_SNOMED_EXP_MAP =
+      Map.of(
+        "man", "Identifies as male gender",
+        "woman", "Identifies as female gender",
+        "nonbinary", "Identifies as non-conforming gender",
+        "questioning", "Identifies as questioning gender",
+        "not_disclosed", "ASKU"
+      );
+
+  private static final Map<String, String> SO_NEW_SNOMED_CODE_MAP =
+      Map.of(
+        "bisexual_or_pansexual", "42035005",
+        "asexual", "<NEW-SNOMED-CODE-FOR-ASEXUAL:23498239842>",
+        "heterosexual", "20430005",
+        "homosexual", "38628009",
+        "questioning", "<NEW-SNOMED-CODE-FOR-QUESTIONING>",
+        "not_disclosed", "ASKU"
+      );
+
+  private static final Map<String, String> SO_NEW_SNOMED_EXP_MAP =
+      Map.of(
+        "bisexual_or_pansexual", "Bisexual",
+        "asexual", "Asexual",
+        "heterosexual", "Straight or Heterosexual",
+        "homosexual", "Lesbian, Gay, or Homosexual",
+        "questioning", "Questioning",
+        "not_disclosed", "ASKU"
+      );
+
+  private static final Map<String, String> SEX_NEW_SNOMED_CODE_MAP =
+      Map.of(
+        "female", "<NEW-SNOMED-CODE-FOR-FEMALE-SFCU:2393598363>",
+        "male", "<NEW-SNOMED-CODE-FOR-MALE-SFCU:66894645454>",
+        "x", "<NEW-SNOMED-CODE-FOR-X-SFCU:404342522222>",
+        "unsure", "<NEW-SNOMED-CODE-FOR-UNSURE-SFCU:506950965555>",
+        "not_assigned", "<NEW-SNOMED-CODE-FOR-NOT-ASSIGNED-SFCU:112192090283>",
+        "not_disclosed", "<NEW-SNOMED-CODE-FOR-NOT-DISCLOSED-SFCU:23325235235>");
+  
+  private static final Map<String, String> SEX_NEW_SNOMED_EXP_MAP =
+      Map.of(
+        "female", "Female",
+        "male", "Male",
+        "x", "Complex",
+        "unsure", "Unsure",
+        "not_assigned", "Not assigned",
+        "not_disclosed", "Not disclosed");
 
   @Column
   @Type(type = "jsonb")
@@ -166,13 +233,14 @@ public class TestEvent extends BaseTestInfo {
   }
 
   private String val(String s) {
-    return s == null ? "" : s;
+
+    return s == null ? "" : s.replace("notlisted","");
   }
 
   private String val(String s, String d) {
     return s == null 
         ? (d == null ? "" : d)
-        : s;
+        : s.replace("notlisted","");
   }
 
   public String getHl7v2Old() {
@@ -201,7 +269,7 @@ public class TestEvent extends BaseTestInfo {
         +(patientData.getBirthDate()==null
             ?""
             :DATE_FORMAT.format(Date.from(patientData.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant())))
-        +"|GENDERRRRRRRRRRR=>"+val(patientData.getGenderAssignedAtBirth())+"||"
+        +"|*****"+GAAB_OLD_MAP.get(val(patientData.getGenderAssignedAtBirth(),"unknown"))+"*****||"
         +RACE_CODE_MAP.get(val(patientData.getRace(),"unknown"))+"^"
         +RACE_DESCRIPTION_MAP.get(val(patientData.getRace(), "unknown"))+"^"
         +"HL70005|"+val(patientData.getStreet())+"^"+val(patientData.getStreetTwo())+"^"
@@ -247,14 +315,95 @@ public class TestEvent extends BaseTestInfo {
         +(getFacility().getTelephone()==null?"":getFacility().getTelephone().substring(1,4))
         +"^"+(getFacility().getTelephone()==null?"":getFacility().getTelephone().substring(6))
         +"|||||"+DATETIME_FORMAT.format(getDateTested())+"|||F";
-    String obx1 =
-        "OBX|1|CWE|94558-4^SARS-CoV-2 (COVID-19) Ag [Presence] in Respiratory specimen by Rapid immunoassay^LN^^^^2.68||10828004^Positive^SCT||||||F|||202103290106-0400|78D2734280^CLIA||10811877011290_DIT^^99ELR^^^^2.68||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280^CLIA|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017";
+    String obx =
+        "OBX|1|CWE|94558-4^SARS-CoV-2 (COVID-19) Ag [Presence] in Respiratory specimen by Rapid immunoassay^LN^^^^2.68||10828004^Positive^SCT||||||F|||202103290106-0400|78D2734280^CLIA||10811877011290_DIT^^99ELR^^^^2.68||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280^CLIA|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017^MOBX|2|CWE|95418-0^Whether patient is employed in a healthcare setting^LN^^^^2.69||"+(patientData.getEmployedInHealthcare()?"Y":"N")+"^"+(patientData.getEmployedInHealthcare()?"Yes":"No")+"^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|3|CWE|95417-2^First test for condition of interest^LN^^^^2.69||UNK^Unknown^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|4|CWE|65222-2^Date and time of symptom onset^LN^^^^2.68||20210325||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|5|CWE|95421-4^Resides in a congregate care setting^LN^^^^2.69||"+(patientData.getResidentCongregateSetting()?"Y":"N")+"^"+(patientData.getResidentCongregateSetting()?"Yes":"No")+"^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|6|CWE|95419-8^Has symptoms related to condition of interest^LN^^^^2.69||Y^Yes^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MSPM|1|574184&&78D2734280&CLIA^574184&&78D2734280&CLIA||119334006^Sputum specimen^SCT^^^^2.67||||71836000^Nasopharyngeal structure (body structure)^SCT^^^^2020-09-01|||||||||202103290106-0400|20210329010606.0000-0400";
     
-    
-    
+    return String.join(HL7_SECTION_SEPARATOR, List.of(fhs, mhs, sft, pid, orc, obr, obx));
+  }
+
+  public String getHl7v2New() {
+    Random rand = new Random();
+    String randInt = String.valueOf(rand.nextInt(1000000));
+    String abridgedTestId = getInternalId().toString().substring(0, 15);
+    String fhs = 
+        "FHS|^~\\&|CDC PRIME - Atlanta, Georgia (Dekalb)^2.16.840.1.114222.4.1.237821^ISO|"
+        +"CDC PRIME - Atlanta, Georgia (Dekalb)^2.16.840.1.114222.4.1.237821^ISO|||"
+        +DATETIME_FORMAT.format(getDateTested());
+    String mhs = 
+        "MSH|^~\\&|CDC PRIME - Atlanta, Georgia (Dekalb)^2.16.840.1.114222.4.1.237821^ISO|"
+        +"CDC PRIME - Atlanta, Georgia (Dekalb)^2.16.840.1.114222.4.1.237821^ISO|||"
+        +DATETIME_FORMAT.format(getDateTested())
+        +"||ORU^R01^ORU_R01|"+randInt
+        +"|T|2.5.1|||NE|NE|USA||||PHLabReport-NoAck^ELR_Receiver^2.16.840.1.113883.9.11^ISO";
+    String sft =
+        "SFT|Centers for Disease Control and Prevention|0.1-SOGI_EQUITY_DEMO|PRIME SimpleReport|"
+        +"0.1-SOGI_EQUITY_DEMO||20210406";
+    String pid =
+        "PID|1||"+abridgedTestId+"||"
+        +val(patientData.getLastName())+"^"
+        +val(patientData.getFirstName())+"^"
+        +val(patientData.getMiddleName())+"^"
+        +val(patientData.getSuffix())+"^^^L||"
+        +(patientData.getBirthDate()==null
+            ?""
+            :DATE_FORMAT.format(Date.from(patientData.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant())))
+        +"|*****N*****||"
+        +RACE_CODE_MAP.get(val(patientData.getRace(),"unknown"))+"^"
+        +RACE_DESCRIPTION_MAP.get(val(patientData.getRace(), "unknown"))+"^"
+        +"HL70005|"+val(patientData.getStreet())+"^"+val(patientData.getStreetTwo())+"^"
+        +val(patientData.getCity())+"^"
+        +val(patientData.getState())+"^"
+        +val(patientData.getZipCode())+"||^NET^Internet^"+val(patientData.getEmail())+"~^1^"
+        +(patientData.getTelephone()==null?"":patientData.getTelephone().substring(1,4))+"^"
+        +(patientData.getTelephone()==null?"":patientData.getTelephone().substring(6))
+        +"|||||||||"
+        +ETHNICITY_CODE_MAP.get(val(patientData.getEthnicity(),"unknown"))+"^"
+        +ETHNICITY_DESCRIPTION_MAP.get(val(patientData.getEthnicity(),"unknown"))+"^"
+        +"HL70189||||||||N";
+    String orc =
+        "ORC|RE|"+randInt+"|"+randInt+"^^"+abridgedTestId+"^"+"UUID|||||||||"
+        +providerData.getInternalId().toString().substring(0, 15)
+        +"^"+val(providerData.getNameInfo().getLastName())+"^"+val(providerData.getNameInfo().getFirstName())
+        +"^^"+val(providerData.getNameInfo().getSuffix())+"^^^^CMS&2.16.840.1.113883.3.249&ISO^^^^NPI||"
+        +"^WPN^PH^^1^"
+        +(providerData.getTelephone()==null?"":providerData.getTelephone().substring(1,4))
+        +"^"+(providerData.getTelephone()==null?"":providerData.getTelephone().substring(6))
+        +"|"+DATETIME_FORMAT.format(getDateTested())+"||||||"
+        +val(getFacility().getFacilityName())+"|"+val(getFacility().getAddress().getStreetOne())
+        +"^"+val(getFacility().getAddress().getStreetTwo())+"^"
+        +val(getFacility().getAddress().getCity())+"^"
+        +val(getFacility().getAddress().getState())+"^"
+        +val(getFacility().getAddress().getPostalCode())
+        +"|^WPN^PH^^1^"
+        +(getFacility().getTelephone()==null?"":getFacility().getTelephone().substring(1,4))
+        +"^"+(getFacility().getTelephone()==null?"":getFacility().getTelephone().substring(6))
+        +"|"+val(providerData.getAddress().getStreetOne())
+        +"^"+val(providerData.getAddress().getStreetTwo())+"^"
+        +val(providerData.getAddress().getCity())+"^"
+        +val(providerData.getAddress().getState())+"^"
+        +val(providerData.getAddress().getPostalCode());
+    String obr =
+        "OBR|1|"+randInt+"|"+randInt+"|"+val(getDeviceType().getLoincCode())
+        +"^SARS-CoV-2 (COVID-19) Ag [Presence] in Respiratory specimen by Rapid immunoassay"
+        +"^LN|||"+DATETIME_FORMAT.format(getDateTested())+"|"+DATETIME_FORMAT.format(getDateTested())
+        +"||||||||"+providerData.getInternalId().toString().substring(0, 15)
+        +"^"+val(providerData.getNameInfo().getLastName())+"^"+val(providerData.getNameInfo().getFirstName())
+        +"^^"+val(providerData.getNameInfo().getSuffix())+"^^^^CMS&2.16.840.1.113883.3.249&ISO^^^^NPI"
+        +"|^WPN^PH^^1^"
+        +(getFacility().getTelephone()==null?"":getFacility().getTelephone().substring(1,4))
+        +"^"+(getFacility().getTelephone()==null?"":getFacility().getTelephone().substring(6))
+        +"|||||"+DATETIME_FORMAT.format(getDateTested())+"|||F";
+    String obx =
+        "OBX|1|CWE|94558-4^SARS-CoV-2 (COVID-19) Ag [Presence] in Respiratory specimen by Rapid immunoassay^LN^^^^2.68||10828004^Positive^SCT||||||F|||202103290106-0400|78D2734280^CLIA||10811877011290_DIT^^99ELR^^^^2.68||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280^CLIA|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017^MOBX|2|CWE|95418-0^Whether patient is employed in a healthcare setting^LN^^^^2.69||"+(patientData.getEmployedInHealthcare()?"Y":"N")+"^"+(patientData.getEmployedInHealthcare()?"Yes":"No")+"^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|3|CWE|95417-2^First test for condition of interest^LN^^^^2.69||UNK^Unknown^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|4|CWE|65222-2^Date and time of symptom onset^LN^^^^2.68||20210325||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|5|CWE|95421-4^Resides in a congregate care setting^LN^^^^2.69||"+(patientData.getResidentCongregateSetting()?"Y":"N")+"^"+(patientData.getResidentCongregateSetting()?"Yes":"No")+"^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|6|CWE|95419-8^Has symptoms related to condition of interest^LN^^^^2.69||Y^Yes^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MSPM|1|574184&&78D2734280&CLIA^574184&&78D2734280&CLIA||119334006^Sputum specimen^SCT^^^^2.67||||71836000^Nasopharyngeal structure (body structure)^SCT^^^^2020-09-01|||||||||202103290106-0400|20210329010606.0000-0400";
+    String gender_obx =
+        String.join(HL7_SECTION_SEPARATOR,patientData.getGender().stream().map(g->"OBX|1|CWE|<NEW-LOINC-CODE-FOR-GENDER-IDENTITY:193723-5>^Gender Identity Revised^LN^^^^2.68||"+GENDER_NEW_SNOMED_CODE_MAP.getOrDefault(val(g, "unknown"), g)+"^"+GENDER_NEW_SNOMED_EXP_MAP.getOrDefault(val(g, "unknown"), g)+"^SCT||||||F|||202103290106-0400|78D2734280^CLIA||10811877011290_DIT^^99ELR^^^^2.68||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280^CLIA|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017").collect(Collectors.toList()));
+    String so_obx =
+        String.join(HL7_SECTION_SEPARATOR,patientData.getSexualOrientation().stream().map(g->"OBX|1|CWE|76690-7^Sexual Orientation^LN^^^^2.68||"+SO_NEW_SNOMED_CODE_MAP.getOrDefault(val(g, "unknown"), g)+"^"+SO_NEW_SNOMED_EXP_MAP.getOrDefault(val(g, "unknown"), g)+"^SCT||||||F|||202103290106-0400|78D2734280^CLIA||10811877011290_DIT^^99ELR^^^^2.68||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280^CLIA|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017").collect(Collectors.toList()));
+    String sex_obx =
+        "OBX|1|CWE|<NEW-LOINC-CODE-FOR-SEX-FOR-CLINICAL-USE:203231-9>^Sex For Clinical Use^LN^^^^2.68||"+SEX_NEW_SNOMED_CODE_MAP.getOrDefault(val(patientData.getGenderAssignedAtBirth(), "unknown"), patientData.getGenderAssignedAtBirth())+"^"+SEX_NEW_SNOMED_EXP_MAP.getOrDefault(val(patientData.getGenderAssignedAtBirth(), "unknown"), patientData.getGenderAssignedAtBirth())+"^SCT||||||F|||202103290106-0400|78D2734280^CLIA||10811877011290_DIT^^99ELR^^^^2.68||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280^CLIA|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017";
     
     //^MOBX|2|CWE|95418-0^Whether patient is employed in a healthcare setting^LN^^^^2.69||N^No^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|3|CWE|95417-2^First test for condition of interest^LN^^^^2.69||UNK^Unknown^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|4|CWE|65222-2^Date and time of symptom onset^LN^^^^2.68||20210325||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|5|CWE|95421-4^Resides in a congregate care setting^LN^^^^2.69||UNK^Unknown^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MOBX|6|CWE|95419-8^Has symptoms related to condition of interest^LN^^^^2.69||Y^Yes^HL70136||||||F|||202103290106-0400|78D2734280||||202103240000-0500||||Any lab USA^^^^^CLIA&2.16.840.1.113883.19.4.6&ISO^XX^^^78D2734280|2004 Ronald Parks^^Upper black eddy^PA^18972^^^^42017|||||QST^MSPM|1|574184&&78D2734280&CLIA^574184&&78D2734280&CLIA||119334006^Sputum specimen^SCT^^^^2.67||||71836000^Nasopharyngeal structure (body structure)^SCT^^^^2020-09-01|||||||||202103290106-0400|20210329010606.0000-0400
-    return String.join(HL7_SECTION_SEPARATOR, List.of(fhs, mhs, sft, pid, orc, obr));
+    return String.join(HL7_SECTION_SEPARATOR, List.of(fhs, mhs, sft, pid, orc, obr, obx, gender_obx, so_obx, sex_obx));
   }
 
 }

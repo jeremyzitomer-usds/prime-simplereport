@@ -75,7 +75,7 @@ export const GENDER_ASSIGNED_AT_BIRTH: { value: GenderAssignedAtBirth; label: st
   { label: "Male ('M')", value: "male" },
   { label: "X ('X')", value: "x" },
   { label: "Unsure", value: "unsure" },
-  { label: "I was not assigned a gender at birth", value: "none" },
+  { label: "I was not assigned a gender at birth", value: "not_assigned" },
   { label: "Prefer not to disclose", value: "not_disclosed" },
   { label: "A gender assigned at birth not listed (please specify):", value: "notlisted" },
 ];

@@ -176,7 +176,10 @@ public class Translators {
         continue;
       }
       gender = gender.toLowerCase();
-      if (!GENDERS.contains(gender)) {
+      // if (gender.startsWith("notlisted")) {
+      //   gender = gender.replace("notlisted", "");
+      // }
+      if (!GENDERS.contains(gender) && !genders.contains(gender)) {
         if (containsCustom) {
           throw new IllegalGraphqlArgumentException(
               "\"" + gs.toString() + "\" must contain at most one item not listed in " +
@@ -204,6 +207,9 @@ public class Translators {
       return null;
     }
     gender = gender.toLowerCase();
+    if (gender.startsWith("notlisted")) {
+      gender = gender.replace("notlisted", "");
+    }
     // Currently same logic is executed regardless of whether the string is in
     // the preset value set or not, but keeping the preset value set around
     // because it may be valuable in the future.
@@ -234,7 +240,10 @@ public class Translators {
         continue;
       }
       sexualOrientation = sexualOrientation.toLowerCase();
-      if (!SEXUAL_ORIENTATIONS.contains(sexualOrientation)) {
+      // if (sexualOrientation.startsWith("notlisted")) {
+      //   sexualOrientation = sexualOrientation.replace("notlisted", "");
+      // }
+      if (!SEXUAL_ORIENTATIONS.contains(sexualOrientation) && !sexualOrientations.contains(sexualOrientation)) {
         if (containsCustom) {
           throw new IllegalGraphqlArgumentException(
               "\"" + os.toString() + "\" must contain at most one item not listed in " +

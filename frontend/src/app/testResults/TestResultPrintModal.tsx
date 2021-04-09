@@ -49,6 +49,7 @@ export const testQuery = gql`
         loincCode
       }
       hl7v2Old
+      hl7v2New
     }
   }
 `;
@@ -76,7 +77,8 @@ export const DetachedTestResultPrintModal = ({
     deviceType,
     testPerformed,
     correctionStatus,
-    hl7v2Old
+    hl7v2Old,
+    hl7v2New
   } = data.testResult;
 
   return (
@@ -271,8 +273,12 @@ export const DetachedTestResultPrintModal = ({
           </section>
         </main>
         <header>
-          <h1>HL7 v2 Result</h1>
+          <h1>HL7 v2 Result - Old SOGI Encoding</h1>
           <p>{hl7v2Old}</p>
+        </header>
+        <header>
+          <h1>HL7 v2 Result - New SOGI Encoding</h1>
+          <p>{hl7v2New}</p>
         </header>
         <footer>
           <p>Test result printed {new Date().toLocaleString()}</p>

@@ -278,18 +278,15 @@ const AoEForm: React.FC<Props> = ({
             />
           </div>
         </FormGroup>
-
-        {patient.genderAssignedAtBirth?.toLowerCase() !== "male" && (
-          <FormGroup title="Pregnancy">
-            <RadioGroup
-              legend="Currently pregnant?"
-              name="pregnancy"
-              onChange={setPregnancyResponse}
-              buttons={pregnancyResponses}
-              selectedRadio={pregnancyResponse}
-            />
-          </FormGroup>
-        )}
+        <FormGroup title="Pregnancy">
+          <RadioGroup
+            legend="Currently pregnant?"
+            name="pregnancy"
+            onChange={setPregnancyResponse}
+            buttons={pregnancyResponses}
+            selectedRadio={pregnancyResponse}
+          />
+        </FormGroup>
         <div
           className={classnames(
             isModal
