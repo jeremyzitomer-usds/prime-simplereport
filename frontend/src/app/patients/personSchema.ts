@@ -5,9 +5,9 @@ import {
   RACE_VALUES,
   ROLE_VALUES,
   ETHNICITY_VALUES,
-  GENDER,
+  // GENDER,
   GENDER_ASSIGNED_AT_BIRTH,
-  SEXUAL_ORIENTATION,
+  // SEXUAL_ORIENTATION,
 } from "../constants";
 import { Option } from "../commonComponents/Dropdown";
 
@@ -65,9 +65,9 @@ export const personSchema: yup.SchemaOf<RequiredPersonFields> = yup.object({
   zipCode: yup.string().required(),
   race: yup.mixed().oneOf([...getValues(RACE_VALUES), "", null]),
   ethnicity: yup.mixed().oneOf([...getValues(ETHNICITY_VALUES), "", null]),
-  gender: yup.mixed().oneOf([...getValues(GENDER), "", null]),
+  gender: yup.array(),
   genderAssignedAtBirth: yup.mixed().oneOf([...getValues(GENDER_ASSIGNED_AT_BIRTH), "", null]),
-  sexualOrientation: yup.mixed().oneOf([...getValues(SEXUAL_ORIENTATION), "", null]),
+  sexualOrientation: yup.array(),
   residentCongregateSetting: yup.bool().required(),
   employedInHealthcare: yup.bool().required(),
 });
@@ -92,7 +92,7 @@ export const allPersonErrors: Required<PersonErrors> = {
   county: "County is incorrectly formatted",
   race: "Race is incorrectly formatted",
   ethnicity: "Ethnicity is incorrectly formatted",
-  gender: "Gender is incorrectly formatted",
+  gender: "Gender Identity correctly formatted",
   genderAssignedAtBirth: "Gender Assigned at Birth is incorrectly formatted",
   sexualOrientation: "Sexual Orientation is incorrectly formatted",
   residentCongregateSetting:

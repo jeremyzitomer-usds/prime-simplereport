@@ -62,11 +62,11 @@ export const ETHNICITY_VALUES: { value: Ethnicity; label: string }[] = [
 ];
 
 export const GENDER: { value: string; label: string; checked?: boolean }[] = [
-  { label: "Female, Woman, or Girl", value: "female" },
-  { label: "Male, Man, or Boy", value: "male" },
+  { label: "Female, Woman, or Girl", value: "woman" },
+  { label: "Male, Man, or Boy", value: "man" },
   { label: "Nonbinary", value: "nonbinary" },
   { label: "Questioning", value: "questioning" },
-  { label: "Prefer not to disclose", value: "notdisclosed" },
+  { label: "Prefer not to disclose", value: "not_disclosed" },
   { label: "A gender identity not listed (please specify):", value: "notlisted" },
 ]
 
@@ -76,17 +76,17 @@ export const GENDER_ASSIGNED_AT_BIRTH: { value: GenderAssignedAtBirth; label: st
   { label: "X ('X')", value: "x" },
   { label: "Unsure", value: "unsure" },
   { label: "I was not assigned a gender at birth", value: "none" },
+  { label: "Prefer not to disclose", value: "not_disclosed" },
   { label: "A gender assigned at birth not listed (please specify):", value: "notlisted" },
-  { label: "Prefer not to disclose", value: "notdisclosed" },
 ];
 
 export const SEXUAL_ORIENTATION: { value: string; label: string; checked?: boolean }[] = [
   { label: "Heterosexual (Straight, Not Lesbian or Gay)", value: "heterosexual" },
   { label: "Homosexual (Gay or Lesbian)", value: "homosexual" },
-  { label: "Bisexual or Pansexual", value: "bipan" },
+  { label: "Bisexual or Pansexual", value: "bisexual_or_pansexual" },
   { label: "Asexual or Asexual Spectrum", value: "asexual" },
   { label: "Questioning", value: "questioning" },
-  { label: "Prefer not to disclose", value: "notdisclosed" },
+  { label: "Prefer not to disclose", value: "not_disclosed" },
   { label: "A sexual orientation not listed (please specify):", value: "notlisted" },
 ]
 
